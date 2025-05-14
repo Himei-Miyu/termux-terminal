@@ -14,11 +14,11 @@ ZSH_URL="https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.
 
 mv $MOTD_FILE $MOTD_FILE.bak
 echo -e "" > "$MOTD_FILE"
-mv ~/.termux/termux.properties.bak $PREFIX/etc
+[ -f ~/.termux/termux.properties.bak ] && mv ~/.termux/termux.properties.bak $PREFIX/etc
 
 rm -rf ~/.config* ~/.termux* ~/.screen* ~/.vim* ~/.zsh* ~/.oh-my* ~/.zcom* ~/.cache* ~/.local* ~/.npm*
 mkdir -p ~/.config/micro ~/.termux
-mv $PREFIX/etc/termux.properties.bak ~/.termux/
+[ -f ~/.termux/termux.properties.bak ] && mv $PREFIX/etc/termux.properties.bak ~/.termux/
 curl -fsSLo ~/.termux/termux.properties $TERMUX_CONF_URL
 curl -fsSLo ~/.config/starship.toml $STARSHIP_CONF_URL
 curl -fsSLo ~/.config/micro/settings.json $MICRO_CONF_URL
