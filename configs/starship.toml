@@ -1,7 +1,8 @@
 format = '''
-┌\($os\)─$username$hostname\($time\)─\($status\)$cmd_duration
+[┌\(${custom.clientip}$localip\)
+├\($os\)─$hostname\($time\)─\($status\)$cmd_duration
 ├─\[$directory\] $git_branch$git_commit$git_state$git_metrics$git_status
-└$character
+└](bold line)$character
 '''
 
 right_format='$package$nodejs'
@@ -9,73 +10,96 @@ add_newline = false
 palette = 'global'
 
 [palettes.global]
-orange = '#ff4400'
-orange_light = '#ff8855'
-red_light = '#ff4444'
-pink = '#ff99ff'
-green_light = '#aaffaa'
+line = '#00bbff'
+r_ip = '#77ffff'
+l_ip = '#ffaaff'
+fail = '#ff5555'
+pass = '#55ff55'
+alert = '#ffff55'
+branch = '#ffffaa'
 
-[cmd_duration]
-format = '─\([ $duration]($style)\)'
-style = '#00ff00'
-
-[username]
-format = '\([󰇧 ](#00ffff)[$user@]($style)'
-style_root = '#ff0000'
-style_user = '#ffff00'
+[custom.clientip]
+command = 'echo $SSH_CONNECTION | cut -d" " -f1'
+when = 'test -n "$SSH_CONNECTION"'
+format = "[[󰇧 ](#bbffff)$output [󰑅 ](#abcdef)]($style)"
+style = "r_ip"
 
 [hostname]
-format = '[$hostname]($style)\)─'
-style = '#ffff00'
 ssh_only = true
+format = '[\([$hostname]($style)\)─]($bold line)'
+style = '#22ff22'
+
+[cmd_duration]
+format = '[─\([[󰔛 ](#ffffcc)$duration]($style)\)](bold line)'
+style = 'bold #aaffff'
+
+[localip]
+ssh_only = false
+format = '[[ ](#ccffcc)$localipv4]($style)'
+style = 'l_ip'
+disabled = false
 
 [status]
 format = '[$symbol$status]($style)'
 map_symbol = true
-symbol = ' '
-success_symbol = ' '
-not_executable_symbol = '󰜺 '
-not_found_symbol = '󰀪 '
-sigint_symbol = ' '
-success_style = '#00ff00'
-failure_style = '#ff0000'
+symbol = '[ ](#ee0000)'
+success_symbol = '[ ](#00ee00)'
+not_executable_symbol = '[󰜺 ](#aaffff)'
+not_found_symbol = '[󰀪 ](alert)'
+sigint_symbol = '[ ](alert)'
+signal_symbol = '[ ](alert)'
+success_style = 'pass'
+failure_style = 'fail'
 disabled = false
 
 [git_branch]
 format = '[$symbol$branch(:$remote_branch)]($style) '
-symbol = ' '
-style = 'pink'
+always_show_remote = true
+symbol = '[ ](#ffccff)'
+style = 'bold branch'
+
+[git_metrics]
+format = '([󰋚 [$added]($added_style)[$deleted]($deleted_style)](#55ffff) )'
+added_style = 'bold #77ff77'
+deleted_style = 'bold #ff7777'
+disabled = false
+
+[git_state]
+format = '\([$state( $progress_current/$progress_total)]($style)\) '
+style = '#55ff55'
 
 [git_commit]
-format = '[\($hash$tag\)]($style) '
+format = '[$hash]($style) '
+only_detached = false
+style = '#ffaa00'
 
 [git_status]
-format = '[$all_status]($style)'
-style = 'bold orange_light'
+format = '[($all_status$ahead_behind)]($style)'
 conflicted = ' $count '
-ahead = '󰆸 $count '
-behind = '󰆹 $count '
+ahead = '[󰆸 ](#00ff00)$count '
+behind = '[󰆹 ](#ff0000)$count '
 diverged = ' 󰆸 $ahead_count 󰆹 $behind_count '
-up_to_date = '󱓏 '
+up_to_date = '[󱓏 ](#ffccff)'
 untracked = '[󰘥 ](#ffff00)$count '
 stashed = '[󰆺 ](#ffffaa)$count '
 modified = '[󰝶 ](#00ffff)$count '
 staged = '[󰐙 ](#00ff00)$count '
 renamed = '[󱖘 ](#ff00ff)$count '
 deleted = '[󰮈 ](#ff0000)$count '
+style = 'bold #ffaaaa'
 
 [directory]
 format = '[$path[$read_only]($read_only_style)]($style)'
-repo_root_format = '[ ]($before_repo_root_style)[$repo_root]($repo_root_style)[$path[$read_only]($read_only_style)]($style)'
+repo_root_format = '[󰊢 ]($before_repo_root_style)[$repo_root]($repo_root_style)[$path[$read_only]($read_only_style)]($style)'
 truncation_length = 3
 truncation_symbol = '…/'
 truncate_to_repo = true
-before_repo_root_style = 'bold orange'
-repo_root_style = 'bold underline green'
-read_only_style = 'bold red_light'
+before_repo_root_style = '#ff7700'
+repo_root_style = 'bold underline #ffcc00'
+read_only_style = 'bold #ff5500'
 home_symbol = ' '
 read_only = ' 󰦝'
-style = 'bold green_light'
+style = 'bold #55ff55'
 
 [directory.substitutions]
 '/data/data/com.termux/files/usr' = '/usr'
@@ -98,12 +122,12 @@ style = 'bold green_light'
 
 [character]
 format = '$symbol'
-success_symbol = '[](bold green)'
-error_symbol = '[](bold red)'
+success_symbol = '[](bold #11ff11)'
+error_symbol = '[](bold #ff1111)'
 
 [os]
 disabled = false
-style = 'orange'
+style = '#ffaaaa'
 format = '[$symbol]($style)'
 
 [os.symbols]
@@ -111,7 +135,7 @@ Alpaquita = " "
 Alpine = " "
 AlmaLinux = " "
 Amazon = " "
-Android = " "
+Android = "[ ](#00ff00)"
 Arch = " "
 Artix = " "
 CachyOS = " "
@@ -154,9 +178,9 @@ Void = " "
 Windows = "󰍲 "
 
 [time]
-format = '[ $time]($style)'
+format = '[[ ](#55ffff)$time]($style)'
 time_format = '%R'
-style = 'bold green_light'
+style = 'bold #88ff88'
 disabled = false
 
 [package]
