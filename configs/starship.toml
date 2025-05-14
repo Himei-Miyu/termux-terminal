@@ -1,0 +1,168 @@
+format = '''
+┌\($os\)─$username$hostname\($time\)─\($status\)$cmd_duration
+├─\[$directory\] $git_branch$git_commit$git_state$git_metrics$git_status
+└$character
+'''
+
+right_format='$package$nodejs'
+add_newline = false
+palette = 'global'
+
+[palettes.global]
+orange = '#ff4400'
+orange_light = '#ff8855'
+red_light = '#ff4444'
+pink = '#ff99ff'
+green_light = '#aaffaa'
+
+[cmd_duration]
+format = '─\([ $duration]($style)\)'
+style = '#00ff00'
+
+[username]
+format = '\([󰇧 ](#00ffff)[$user@]($style)'
+style_root = '#ff0000'
+style_user = '#ffff00'
+
+[hostname]
+format = '[$hostname]($style)\)─'
+style = '#ffff00'
+ssh_only = true
+
+[status]
+format = '[$symbol$status]($style)'
+map_symbol = true
+symbol = ' '
+success_symbol = ' '
+not_executable_symbol = '󰜺 '
+not_found_symbol = '󰀪 '
+sigint_symbol = ' '
+success_style = '#00ff00'
+failure_style = '#ff0000'
+disabled = false
+
+[git_branch]
+format = '[$symbol$branch(:$remote_branch)]($style) '
+symbol = ' '
+style = 'pink'
+
+[git_commit]
+format = '[\($hash$tag\)]($style) '
+
+[git_status]
+format = '[$all_status]($style)'
+style = 'bold orange_light'
+conflicted = ' $count '
+ahead = '󰆸 $count '
+behind = '󰆹 $count '
+diverged = ' 󰆸 $ahead_count 󰆹 $behind_count '
+up_to_date = '󱓏 '
+untracked = '[󰘥 ](#ffff00)$count '
+stashed = '[󰆺 ](#ffffaa)$count '
+modified = '[󰝶 ](#00ffff)$count '
+staged = '[󰐙 ](#00ff00)$count '
+renamed = '[󱖘 ](#ff00ff)$count '
+deleted = '[󰮈 ](#ff0000)$count '
+
+[directory]
+format = '[$path[$read_only]($read_only_style)]($style)'
+repo_root_format = '[ ]($before_repo_root_style)[$repo_root]($repo_root_style)[$path[$read_only]($read_only_style)]($style)'
+truncation_length = 3
+truncation_symbol = '…/'
+truncate_to_repo = true
+before_repo_root_style = 'bold orange'
+repo_root_style = 'bold underline green'
+read_only_style = 'bold red_light'
+home_symbol = ' '
+read_only = ' 󰦝'
+style = 'bold green_light'
+
+[directory.substitutions]
+'/data/data/com.termux/files/usr' = '/usr'
+'/usr/etc' = '/ '
+'/usr/bin' = '/ '
+'/usr/tmp' = '/ '
+'/usr/share' = '/ '
+'/usr/var/log' = '/ '
+'projects/termux-projects' = ' Termux Projects'
+'src/etc' = ' '
+'src/tests' = '󰙨'
+'src/utils' = ' '
+'src/libs' = ' '
+"Documents" = "󰈙 "
+"Downloads" = " "
+"Music" = " "
+"Pictures" = " "
+"projects" = ' Projects'
+"www" = '󰖟 '
+
+[character]
+format = '$symbol'
+success_symbol = '[](bold green)'
+error_symbol = '[](bold red)'
+
+[os]
+disabled = false
+style = 'orange'
+format = '[$symbol]($style)'
+
+[os.symbols]
+Alpaquita = " "
+Alpine = " "
+AlmaLinux = " "
+Amazon = " "
+Android = " "
+Arch = " "
+Artix = " "
+CachyOS = " "
+CentOS = " "
+Debian = " "
+DragonFly = " "
+Emscripten = " "
+EndeavourOS = " "
+Fedora = " "
+FreeBSD = " "
+Garuda = "󰛓 "
+Gentoo = " "
+HardenedBSD = "󰞌 "
+Illumos = "󰈸 "
+Kali = " "
+Linux = " "
+Mabox = " "
+Macos = " "
+Manjaro = " "
+Mariner = " "
+MidnightBSD = " "
+Mint = " "
+NetBSD = " "
+NixOS = " "
+Nobara = " "
+OpenBSD = "󰈺 "
+openSUSE = " "
+OracleLinux = "󰌷 "
+Pop = " "
+Raspbian = " "
+Redhat = " "
+RedHatEnterprise = " "
+RockyLinux = " "
+Redox = "󰀘 "
+Solus = "󰠳 "
+SUSE = " "
+Ubuntu = " "
+Unknown = ""
+Void = " "
+Windows = "󰍲 "
+
+[time]
+format = '[ $time]($style)'
+time_format = '%R'
+style = 'bold green_light'
+disabled = false
+
+[package]
+format = '[$symbol($version)]($style) '
+symbol = ' '
+
+[nodejs]
+format = '[$symbol($version)]($style) '
+symbol = ' '
