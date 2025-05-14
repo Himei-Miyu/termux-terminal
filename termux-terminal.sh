@@ -16,7 +16,7 @@ mv $MOTD_FILE $MOTD_FILE.bak
 echo -e "" > "$MOTD_FILE"
 [ -f ~/.termux/termux.properties.bak ] && mv ~/.termux/termux.properties.bak $PREFIX/etc
 
-rm -rf ~/.config* ~/.termux* ~/.screen* ~/.vim* ~/.zsh* ~/.oh-my* ~/.zcom* ~/.cache* ~/.local* ~/.npm*
+rm -rf ~/.config* ~/.termux ~/.screen* ~/.vim* ~/.zsh* ~/.oh-my* ~/.zcom* ~/.cache* ~/.local* ~/.npm*
 mkdir -p ~/.config/micro ~/.termux
 [ -f $PREFIX/etc/termux.properties.bak ] && mv $PREFIX/etc/termux.properties.bak ~/.termux/
 curl -fsSLo ~/.termux/termux.properties $TERMUX_CONF_URL
