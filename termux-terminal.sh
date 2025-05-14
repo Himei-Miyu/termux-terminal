@@ -4,7 +4,7 @@ TERMUX_ROOT_DIR=$PREFIX/etc/termux
 TERMUX_HOME_DIR=~/.termux
 TERMUX_FONT_FILE=$TERMUX_HOME_DIR/font.ttf
 MOTD_FILE=$PREFIX/etc/motd
-PKGs=(rsync htop termux-api tmux jq tree nodejs zsh micro starship neofetch openssh openssl-tool gnupg git)
+PKGs=(ncurses-utils rsync htop termux-api tmux jq tree nodejs zsh micro starship neofetch openssh openssl-tool gnupg git)
 HOST="https://himei.city"
 FONT_URL="$HOST/fonts/FiraCodeNerdFont-Regular.ttf"
 TERMUX_CONF_URL="https://raw.githubusercontent.com/Himei-Miyu/termux-terminal/refs/heads/main/configs/termux/termux.properties"
@@ -14,7 +14,7 @@ ZSH_URL="https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.
 
 mv $MOTD_FILE $MOTD_FILE.bak
 echo -e "" > "$MOTD_FILE"
-mv ~/.termux/termux.properties $PREFIX/etc/termux.properties.bak
+mv ~/.termux/termux.properties.bak $PREFIX/etc
 
 rm -rf ~/.config* ~/.termux* ~/.screen* ~/.vim* ~/.zsh* ~/.oh-my* ~/.zcom* ~/.cache* ~/.local* ~/.npm*
 mkdir -p ~/.config/micro ~/.termux
@@ -43,7 +43,29 @@ git clone --depth 1 -- https://github.com/marlonrichert/zsh-autocomplete.git ${Z
 
 sed -i 's/^plugins=(git)$/plugins=(git zsh-autosuggestions zsh-syntax-highlighting fast-syntax-highlighting zsh-autocomplete)/' ~/.zshrc
 
-echo "Staring... zsh"
-sleep 2
+ln -s $PREFIX/bin/zsh ~/.termux/shell
+
+termux-reload-settings
+
+c=$(tput cols)
+b='-------------------------------------------------'
+w=${#b}; iw=$((w-2))
+rainbow=$'\e[1;31mW\e[1;33mE\e[1;32mL\e[1;36mC\e[1;34mO\e[1;35mM\e[1;31mE\e[0m'
+l2_raw=" HIMEI.CITY TERMINAL "
+icon=""
+white_icon=$'\e[37m'"$icon"$'\e[0m'
+green_text=$'\e[1;32m'" HIMEI.CITY TERMINAL "$'\e[0m'
+m=$(printf '%*s' $(((c-w)/2)) "")
+p1=$(((iw-7)/2)); q1=$((iw-7-p1))
+p2=$(((iw-${#l2_raw})/2)); q2=$((iw-${#l2_raw}-p2))
 clear
+echo "${m}${b}"
+echo "${m}|$(printf '%*s' $iw "")|"
+echo "${m}|$(printf '%*s' $p1 "")${rainbow}$(printf '%*s' $q1 "")|"
+echo "${m}|$(printf '%*s' $p2 "")${white_icon}${green_text}${white_icon}$(printf '%*s' $q2 "")|"
+echo "${m}|$(printf '%*s' $iw "")|"
+echo "${m}${b}"
+
+sleep 2
 zsh
+exit 0
