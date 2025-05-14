@@ -18,7 +18,7 @@ echo -e "" > "$MOTD_FILE"
 
 rm -rf ~/.config* ~/.termux* ~/.screen* ~/.vim* ~/.zsh* ~/.oh-my* ~/.zcom* ~/.cache* ~/.local* ~/.npm*
 mkdir -p ~/.config/micro ~/.termux
-[ -f ~/.termux/termux.properties.bak ] && mv $PREFIX/etc/termux.properties.bak ~/.termux/
+[ -f $PREFIX/etc/termux.properties.bak ] && mv $PREFIX/etc/termux.properties.bak ~/.termux/
 curl -fsSLo ~/.termux/termux.properties $TERMUX_CONF_URL
 curl -fsSLo ~/.config/starship.toml $STARSHIP_CONF_URL
 curl -fsSLo ~/.config/micro/settings.json $MICRO_CONF_URL
