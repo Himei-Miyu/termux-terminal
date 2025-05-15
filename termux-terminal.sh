@@ -10,6 +10,8 @@ FONT_URL="$HOST/fonts/FiraCodeNerdFont-Regular.ttf"
 TERMUX_CONF_URL="https://raw.githubusercontent.com/Himei-Miyu/termux-terminal/refs/heads/main/configs/termux/termux.properties"
 STARSHIP_CONF_URL="https://raw.githubusercontent.com/Himei-Miyu/termux-terminal/refs/heads/main/configs/starship/starship.toml"
 MICRO_CONF_URL="https://raw.githubusercontent.com/Himei-Miyu/termux-terminal/refs/heads/main/configs/micro/settings.json"
+HTOP_CONF_URL="https://raw.githubusercontent.com/Himei-Miyu/termux-terminal/refs/heads/main/configs/htop/htoprc"
+
 ZSH_URL="https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh"
 
 mv $MOTD_FILE $MOTD_FILE.bak
@@ -17,16 +19,17 @@ echo -e "" > "$MOTD_FILE"
 [ -f ~/.termux/termux.properties.bak ] && mv ~/.termux/termux.properties.bak $PREFIX/etc
 
 rm -rf ~/.config* ~/.termux ~/.screen* ~/.vim* ~/.zsh* ~/.oh-my* ~/.zcom* ~/.cache* ~/.local* ~/.npm*
-mkdir -p ~/.config/micro ~/.termux
+mkdir -p ~/.config/micro ~/.config/htop ~/.termux
 [ -f $PREFIX/etc/termux.properties.bak ] && mv $PREFIX/etc/termux.properties.bak ~/.termux/
 curl -fsSLo ~/.termux/termux.properties $TERMUX_CONF_URL
 curl -fsSLo ~/.config/starship.toml $STARSHIP_CONF_URL
 curl -fsSLo ~/.config/micro/settings.json $MICRO_CONF_URL
+curl -fsSLo ~/.config/htop/htoprc $HTOP_CONF_URL
 cat $TERMUX_ROOT_DIR/mirrors/default > $TERMUX_ROOT_DIR/chosen_mirrors
 apt update;
-apt -y -o Dpkg::Options::="--force-confdef" upgrade;
+apt -y -o Dpkg::Options::="--force-confdef" full-upgrade;
 apt install -y ${PKGs[@]}
-npm install -g pnpm
+npm i -g pnpm
 curl -fsSL $ZSH_URL | bash -
 curl -fsSLo $TERMUX_FONT_FILE $FONT_URL
 
