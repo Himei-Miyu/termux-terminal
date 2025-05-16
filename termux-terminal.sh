@@ -29,7 +29,8 @@ cat $TERMUX_ROOT_DIR/mirrors/default > $TERMUX_ROOT_DIR/chosen_mirrors
 apt update;
 apt -y -o Dpkg::Options::="--force-confdef" full-upgrade;
 apt install -y ${PKGs[@]}
-npm i -g pnpm
+corepack enable
+corepack prepare pnpm@latest --activate
 curl -fsSL $ZSH_URL | bash -
 curl -fsSLo $TERMUX_FONT_FILE $FONT_URL
 
