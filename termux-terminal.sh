@@ -24,15 +24,15 @@ MOTD_FILE=$PREFIX/etc/motd
 #openssl-tool       : openssl command make certificate
 #gnupg              : gpg command make signature
 #git                : version control or store code
-PKGs=(termux-services ncurses-utils rsync htop termux-api tmux jq tree nodejs zsh micro starship neofetch openssh openssl-tool gnupg git)
+PKGs=(mpd mpc ncmpcpp termux-services ncurses-utils rsync htop termux-api tmux jq tree nodejs zsh micro starship neofetch openssh openssl-tool gnupg git)
 HOST="https://himei.city"
 FONT_URL="$HOST/fonts/FiraCodeNerdFont-Regular.ttf"
-TERMUX_CONF_URL="https://raw.githubusercontent.com/Himei-Miyu/termux-terminal/refs/heads/main/configs/termux/termux.properties"
-STARSHIP_CONF_URL="https://raw.githubusercontent.com/Himei-Miyu/termux-terminal/refs/heads/main/configs/starship/starship.toml"
-MICRO_CONF_URL="https://raw.githubusercontent.com/Himei-Miyu/termux-terminal/refs/heads/main/configs/micro/settings.json"
-HTOP_CONF_URL="https://raw.githubusercontent.com/Himei-Miyu/termux-terminal/refs/heads/main/configs/htop/htoprc"
-MPD_CONF_URL="https://raw.githubusercontent.com/Himei-Miyu/termux-terminal/refs/heads/main/configs/mpd/mpd.conf"
-NCMPCPP_CONF_URL="https://raw.githubusercontent.com/Himei-Miyu/termux-terminal/refs/heads/main/configs/ncmpcpp/config"
+TERMUX_CONF_URL="https://raw.githubusercontent.com/Himei-Miyu/termux-terminal/refs/heads/main/config/termux/termux.properties"
+STARSHIP_CONF_URL="https://raw.githubusercontent.com/Himei-Miyu/termux-terminal/refs/heads/main/config/starship/starship.toml"
+MICRO_CONF_URL="https://raw.githubusercontent.com/Himei-Miyu/termux-terminal/refs/heads/main/config/micro/settings.json"
+HTOP_CONF_URL="https://raw.githubusercontent.com/Himei-Miyu/termux-terminal/refs/heads/main/config/htop/htoprc"
+MPD_CONF_URL="https://raw.githubusercontent.com/Himei-Miyu/termux-terminal/refs/heads/main/config/mpd/mpd.conf"
+NCMPCPP_CONF_URL="https://raw.githubusercontent.com/Himei-Miyu/termux-terminal/refs/heads/main/config/ncmpcpp/config"
 
 ZSH_URL="https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh"
 
