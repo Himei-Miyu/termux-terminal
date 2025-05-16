@@ -4,13 +4,35 @@ TERMUX_ROOT_DIR=$PREFIX/etc/termux
 TERMUX_HOME_DIR=~/.termux
 TERMUX_FONT_FILE=$TERMUX_HOME_DIR/font.ttf
 MOTD_FILE=$PREFIX/etc/motd
-PKGs=(ncurses-utils rsync htop termux-api tmux jq tree nodejs zsh micro starship neofetch openssh openssl-tool gnupg git)
+#mpd                : music player server
+#mpc                : music player client
+#ncmpcpp            : UI music player client
+#termux-services    : sv command manage deamon
+#ncurses-utils      : tput command check terminal screen
+#rsync              : send/receive file better scp
+#htop               : check status device
+#termux-api         : utility tool termux with android
+#tmux               : multi screen in terminal
+#jq                 : convert json format
+#tree               : list dir with tree format
+#nodejs             : runtime node server
+#zsh                : terminal
+#micro              : editor like vscode
+#starship           : beautiful terminal
+#neofetch           : show type system
+#openssh            : ssh server/remote
+#openssl-tool       : openssl command make certificate
+#gnupg              : gpg command make signature
+#git                : version control or store code
+PKGs=(termux-services ncurses-utils rsync htop termux-api tmux jq tree nodejs zsh micro starship neofetch openssh openssl-tool gnupg git)
 HOST="https://himei.city"
 FONT_URL="$HOST/fonts/FiraCodeNerdFont-Regular.ttf"
 TERMUX_CONF_URL="https://raw.githubusercontent.com/Himei-Miyu/termux-terminal/refs/heads/main/configs/termux/termux.properties"
 STARSHIP_CONF_URL="https://raw.githubusercontent.com/Himei-Miyu/termux-terminal/refs/heads/main/configs/starship/starship.toml"
 MICRO_CONF_URL="https://raw.githubusercontent.com/Himei-Miyu/termux-terminal/refs/heads/main/configs/micro/settings.json"
 HTOP_CONF_URL="https://raw.githubusercontent.com/Himei-Miyu/termux-terminal/refs/heads/main/configs/htop/htoprc"
+MPD_CONF_URL="https://raw.githubusercontent.com/Himei-Miyu/termux-terminal/refs/heads/main/configs/mpd/mpd.conf"
+NCMPCPP_CONF_URL="https://raw.githubusercontent.com/Himei-Miyu/termux-terminal/refs/heads/main/configs/ncmpcpp/config"
 
 ZSH_URL="https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh"
 
@@ -19,12 +41,15 @@ echo -e "" > "$MOTD_FILE"
 [ -f ~/.termux/termux.properties.bak ] && mv ~/.termux/termux.properties.bak $PREFIX/etc
 
 rm -rf ~/.config* ~/.termux ~/.screen* ~/.vim* ~/.zsh* ~/.oh-my* ~/.zcom* ~/.cache* ~/.local* ~/.npm*
-mkdir -p ~/.config/micro ~/.config/htop ~/.termux
+mkdir -p ~/.config/micro ~/.config/mpd ~/.config/ncmpcpp ~/.config/htop ~/.termux
 [ -f $PREFIX/etc/termux.properties.bak ] && mv $PREFIX/etc/termux.properties.bak ~/.termux/
 curl -fsSLo ~/.termux/termux.properties $TERMUX_CONF_URL
 curl -fsSLo ~/.config/starship.toml $STARSHIP_CONF_URL
 curl -fsSLo ~/.config/micro/settings.json $MICRO_CONF_URL
 curl -fsSLo ~/.config/htop/htoprc $HTOP_CONF_URL
+curl -fsSLo ~/.config/mpd/mpd.conf $MPD_CONF_URL
+curl -fsSLo ~/.config/ncmpcpp/config $NCMPCPP_CONF_URL
+
 cat $TERMUX_ROOT_DIR/mirrors/default > $TERMUX_ROOT_DIR/chosen_mirrors
 apt update;
 apt -y -o Dpkg::Options::="--force-confdef" full-upgrade;
@@ -71,5 +96,7 @@ echo "${m}|$(printf '%*s' $iw "")|"
 echo "${m}${b}"
 
 sleep 2
-zsh
+zsh -i -c "echo -e \UF0206 restart termux"
+sleep 2
+
 exit 0
