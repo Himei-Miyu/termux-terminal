@@ -64,7 +64,16 @@ addLine 'neofetch'
 addLine 'eval "$(starship init zsh)"'
 addLine 'export GPG_TTY=$(tty)'
 addLine 'alias l="ls -A"'
-
+addLine \
+'flock -n $PREFIX/tmp/fetch_public_ip.lock -c \'
+  while true; do
+    [ -f $HOME/.PUBLIC_IP ] || printf "OFFLINE" > $HOME/.PUBLIC_IP;
+    ping -c 1 -s 1 1.1.1.1 &> /dev/null;
+    [ $? -eq 0 ] && PUBLIC_IP="$(nslookup myip.opendns.com resolver1.opendns.com 2> /dev/null | grep Address | tail -1 | cut -d" " -f2 | tr -d " ")" || PUBLIC_IP="OFFLINE";
+    [ -z "$PUBLIC_IP" ] && printf "FETCHING" > $HOME/.PUBLIC_IP || printf "$PUBLIC_IP" > $HOME/.PUBLIC_IP;
+    sleep 3;
+  done &
+\''
 git clone https://github.com/zsh-users/zsh-autosuggestions.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
 git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
 git clone https://github.com/zdharma-continuum/fast-syntax-highlighting.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fast-syntax-highlighting
