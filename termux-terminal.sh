@@ -1,7 +1,7 @@
 #!/bin/bash
 
 TERMUX_ROOT_DIR=$PREFIX/etc/termux
-TERMUX_HOME_DIR=~/.termux
+TERMUX_HOME_DIR=$HOME/.termux
 TERMUX_FONT_FILE=$TERMUX_HOME_DIR/font.ttf
 MOTD_FILE=$PREFIX/etc/motd
 #python-yt-dlp      : download video
@@ -40,18 +40,17 @@ ZSH_URL="https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.
 
 mv $MOTD_FILE $MOTD_FILE.bak
 echo -e "" > "$MOTD_FILE"
-[ -f ~/.termux/termux.properties.bak ] && mv ~/.termux/termux.properties.bak $PREFIX/etc
+[ -f $HOME/.termux/termux.properties.bak ] && mv $HOME/.termux/termux.properties.bak $PREFIX/etc
 
-rm -rf ~/.config* ~/.termux ~/.screen* ~/.vim* ~/.zsh* ~/.oh-my* ~/.zcom* ~/.cache* ~/.local* ~/.npm*
-mkdir -p ~/.config/micro ~/.config/mpd ~/.config/ncmpcpp ~/.config/htop ~/.termux
-[ -f $PREFIX/etc/termux.properties.bak ] && mv $PREFIX/etc/termux.properties.bak ~/.termux/
-curl -fsSLo ~/.termux/termux.properties $TERMUX_CONF_URL
-curl -fsSLo ~/.config/starship.toml $STARSHIP_CONF_URL
-curl -fsSLo ~/.config/micro/settings.json $MICRO_CONF_URL
-curl -fsSLo ~/.config/htop/htoprc $HTOP_CONF_URL
-curl -fsSLo ~/.config/mpd/mpd.conf $MPD_CONF_URL
-curl -fsSLo ~/.config/ncmpcpp/config $NCMPCPP_CONF_URL
-
+rm -rf $HOME/.config* $HOME/.termux $HOME/.screen* $HOME/.vim* $HOME/.zsh* $HOME/.oh-my* $HOME/.zcom* $HOME/.cache* $HOME/.local* $HOME/.npm*
+mkdir -p $HOME/.config/micro $HOME/.config/mpd $HOME/.config/ncmpcpp $HOME/.config/htop $HOME/.termux
+[ -f $PREFIX/etc/termux.properties.bak ] && mv $PREFIX/etc/termux.properties.bak $HOME/.termux/
+curl -fsSLo $HOME/.termux/termux.properties $TERMUX_CONF_URL
+curl -fsSLo $HOME/.config/starship.toml $STARSHIP_CONF_URL
+curl -fsSLo $HOME/.config/micro/settings.json $MICRO_CONF_URL
+curl -fsSLo $HOME/.config/htop/htoprc $HTOP_CONF_URL
+curl -fsSLo $HOME/.config/mpd/mpd.conf $MPD_CONF_URL
+curl -fsSLo $HOME/.config/ncmpcpp/config $NCMPCPP_CONF_URL
 cat $TERMUX_ROOT_DIR/mirrors/default > $TERMUX_ROOT_DIR/chosen_mirrors
 apt update;
 apt -y -o Dpkg::Options::="--force-confdef" full-upgrade;
@@ -61,10 +60,13 @@ corepack prepare pnpm@latest --activate
 curl -fsSL $ZSH_URL | bash -
 curl -fsSLo $TERMUX_FONT_FILE $FONT_URL
 
-addLine() { echo "$1" >> ~/.zshrc; }
+addLine() { echo "$1" >> $HOME/.zshrc; }
 addLine 'neofetch'
 addLine 'eval "$(starship init zsh)"'
 addLine 'export GPG_TTY=$(tty)'
+addLine 'export XDG_CONFIG_HOME="$HOME/.config"'
+addLine 'export XDG_DATA_HOME="$HOME/.local/share"'
+addLine 'export XDG_CACHE_HOME="$HOME/.cache"'
 addLine 'alias l="ls -A"'
 addLine \
 'flock -n $PREFIX/tmp/fetch_public_ip.lock -c \'
@@ -81,9 +83,9 @@ git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:
 git clone https://github.com/zdharma-continuum/fast-syntax-highlighting.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fast-syntax-highlighting
 git clone --depth 1 -- https://github.com/marlonrichert/zsh-autocomplete.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autocomplete
 
-sed -i 's/^plugins=(git)$/plugins=(git zsh-autosuggestions zsh-syntax-highlighting fast-syntax-highlighting zsh-autocomplete)/' ~/.zshrc
+sed -i 's/^plugins=(git)$/plugins=(git zsh-autosuggestions zsh-syntax-highlighting fast-syntax-highlighting zsh-autocomplete)/' $HOME/.zshrc
 
-ln -s $PREFIX/bin/zsh ~/.termux/shell
+ln -s $PREFIX/bin/zsh $HOME/.termux/shell
 
 termux-reload-settings
 
