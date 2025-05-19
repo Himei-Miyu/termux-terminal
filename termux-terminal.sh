@@ -42,7 +42,7 @@ mv $MOTD_FILE $MOTD_FILE.bak
 echo -e "" > "$MOTD_FILE"
 [ -f $HOME/.termux/termux.properties.bak ] && mv $HOME/.termux/termux.properties.bak $PREFIX/etc
 
-rm -rf $HOME/.config* $HOME/.termux $HOME/.screen* $HOME/.vim* $HOME/.zsh* $HOME/.oh-my* $HOME/.zcom* $HOME/.cache* $HOME/.local* $HOME/.npm*
+rm -rf $HOME/.PUBLIC_IP $HOME/.config* $HOME/.termux $HOME/.screen* $HOME/.vim* $HOME/.zsh* $HOME/.oh-my* $HOME/.zcom* $HOME/.cache* $HOME/.local* $HOME/.npm*
 mkdir -p $HOME/.config/micro $HOME/.config/mpd $HOME/.config/ncmpcpp $HOME/.config/htop $HOME/.termux
 [ -f $PREFIX/etc/termux.properties.bak ] && mv $PREFIX/etc/termux.properties.bak $HOME/.termux/
 curl -fsSLo $HOME/.termux/termux.properties $TERMUX_CONF_URL
