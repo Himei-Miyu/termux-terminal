@@ -47,6 +47,7 @@ grep -E 'lo:.+' \
 '''
 format = '[[ ](#ccffcc)$output]($style)'
 style = 'l_ip'
+ignore_timeout = true
 
 [custom.cellip]
 command = '''
@@ -64,6 +65,7 @@ grep -E 'rmnet.+:.+' \
 '''
 format = '[[󰢾 ](#ccffcc)$output]($style) '
 style = 'l_ip'
+ignore_timeout = true
 
 [custom.wlanip]
 command = '''
@@ -81,6 +83,7 @@ grep -E 'wlan.+:.+' \
 '''
 format = '[[󰖩 ](#ccffcc)$output]($style) '
 style = 'l_ip'
+ignore_timeout = true
 
 [custom.lanip]
 command = '''
@@ -98,6 +101,7 @@ grep -E '(eth|enp).+:.+' \
 '''
 format = '[[󰌗 ](#ccffcc)$output]($style) '
 style = 'l_ip'
+ignore_timeout = true
 
 [hostname]
 ssh_only = true
