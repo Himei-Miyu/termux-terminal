@@ -24,7 +24,7 @@ MOTD_FILE=$PREFIX/etc/motd
 #openssl-tool       : openssl command make certificate
 #gnupg              : gpg command make signature
 #git                : version control or store code
-PKGs=(mpd mpc ncmpcpp termux-services ncurses-utils rsync htop termux-api tmux jq tree nodejs zsh micro starship neofetch openssh openssl-tool gnupg git)
+PKGs=(dnsutils mpd mpc ncmpcpp termux-services ncurses-utils rsync htop termux-api tmux jq tree nodejs zsh micro starship neofetch openssh openssl-tool gnupg git)
 HOST="https://himei.city"
 FONT_URL="$HOST/fonts/FiraCodeNerdFont-Regular.ttf"
 TERMUX_CONF_URL="https://raw.githubusercontent.com/Himei-Miyu/termux-terminal/refs/heads/main/config/termux/termux.properties"

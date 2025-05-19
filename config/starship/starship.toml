@@ -1,5 +1,6 @@
 format = '''
-[┌\(${custom.clientip}$localip\)
+[┌\(${custom.publicip}\)
+├\(${custom.remoteip}${custom.cellip}${custom.wlanip}${custom.localip}${custom.lanip}\)
 ├\($os\)─$hostname\($time\)─\($status\)$cmd_duration
 ├─\[$directory\] $git_branch$git_commit$git_state$git_metrics$git_status
 └](bold line)$character
@@ -18,11 +19,85 @@ pass = '#55ff55'
 alert = '#ffff55'
 branch = '#ffffaa'
 
-[custom.clientip]
+[custom.publicip]
+command = "echo $(cat $HOME/.PUBLIC_IP || echo 'OFFLINE')"
+when = 'true'
+format = "[[󰇧 ](#00ffff)$output]($style)"
+style = "r_ip"
+
+[custom.remoteip]
 command = 'echo $SSH_CONNECTION | cut -d" " -f1'
 when = 'test -n "$SSH_CONNECTION"'
-format = "[[󰇧 ](#bbffff)$output [󰑅 ](#abcdef)]($style)"
+format = "[[󰑔 ](#bbffff)$output]($style) "
 style = "r_ip"
+
+[custom.localip]
+command = '''
+ifconfig 2> /dev/null | \
+sed -nE 's/^(.+):\s.*/\1:/p;s/.*inet\s(.+)\s.n.*$/\1 /p' | \
+sed -zE 's/\n//g;s/ /\n/g;s/.+:([a-z])/\1/g' | \
+grep -m 1 -E 'lo' | \
+cut -d':' -f2 \
+'''
+when = '''
+ifconfig 2> /dev/null | \
+sed -nE 's/^(.+):\s.*/\1:/p;s/.*inet\s(.+)\s.n.*$/\1 /p' | \
+sed -zE 's/\n//g;s/ /\n/g;s/.+:([a-z])/\1/g' | \
+grep -E 'lo:.+' \
+'''
+format = '[[ ](#ccffcc)$output]($style)'
+style = 'l_ip'
+
+[custom.cellip]
+command = '''
+ifconfig 2> /dev/null | \
+sed -nE 's/^(.+):\s.*/\1:/p;s/.*inet\s(.+)\s.n.*$/\1 /p' | \
+sed -zE 's/\n//g;s/ /\n/g;s/.+:([a-z])/\1/g' | \
+grep -m 1 -E 'rmnet' | \
+cut -d':' -f2 \
+'''
+when = '''
+ifconfig 2> /dev/null | \
+sed -nE 's/^(.+):\s.*/\1:/p;s/.*inet\s(.+)\s.n.*$/\1 /p' | \
+sed -zE 's/\n//g;s/ /\n/g;s/.+:([a-z])/\1/g' | \
+grep -E 'rmnet.+:.+' \
+'''
+format = '[[󰢾 ](#ccffcc)$output]($style) '
+style = 'l_ip'
+
+[custom.wlanip]
+command = '''
+ifconfig 2> /dev/null | \
+sed -nE 's/^(.+):\s.*/\1:/p;s/.*inet\s(.+)\s.n.*$/\1 /p' | \
+sed -zE 's/\n//g;s/ /\n/g;s/.+:([a-z])/\1/g' | \
+grep -m 1 -E 'wlan' | \
+cut -d':' -f2 \
+'''
+when = '''
+ifconfig 2> /dev/null | \
+sed -nE 's/^(.+):\s.*/\1:/p;s/.*inet\s(.+)\s.n.*$/\1 /p' | \
+sed -zE 's/\n//g;s/ /\n/g;s/.+:([a-z])/\1/g' | \
+grep -E 'wlan.+:.+' \
+'''
+format = '[[󰖩 ](#ccffcc)$output]($style) '
+style = 'l_ip'
+
+[custom.lanip]
+command = '''
+ifconfig 2> /dev/null | \
+sed -nE 's/^(.+):\s.*/\1:/p;s/.*inet\s(.+)\s.n.*$/\1 /p' | \
+sed -zE 's/\n//g;s/ /\n/g;s/.+:([a-z])/\1/g' | \
+grep -m 1 -E 'eth|enp' | \
+cut -d':' -f2 \
+'''
+when = '''
+ifconfig 2> /dev/null | \
+sed -nE 's/^(.+):\s.*/\1:/p;s/.*inet\s(.+)\s.n.*$/\1 /p' | \
+sed -zE 's/\n//g;s/ /\n/g;s/.+:([a-z])/\1/g' | \
+grep -E '(eth|enp).+:.+' \
+'''
+format = '[[󰌗 ](#ccffcc)$output]($style) '
+style = 'l_ip'
 
 [hostname]
 ssh_only = true
@@ -32,12 +107,6 @@ style = '#22ff22'
 [cmd_duration]
 format = '[─\([[󰔛 ](#ffffcc)$duration]($style)\)](bold line)'
 style = 'bold #aaffff'
-
-[localip]
-ssh_only = false
-format = '[[ ](#ccffcc)$localipv4]($style)'
-style = 'l_ip'
-disabled = false
 
 [status]
 format = '[$symbol$status]($style)'

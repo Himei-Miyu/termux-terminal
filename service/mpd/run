@@ -1,0 +1,4 @@
+#!/data/data/com.termux/files/usr/bin/sh
+if [ -f "/data/data/com.termux/files/home/.mpd/mpd.conf" ]; then CONFIG="/data/data/com.termux/files/home/.mpd/mpd.conf"; else CONFIG="/data/data/com.termux/files/usr/etc/mpd.conf"; fi
+[ -f "/data/data/com.termux/files/home/.config/mpd/mpd.conf" ] && CONFIG="/data/data/com.termux/files/home/.config/mpd/mpd.conf"
+exec mpd --stdout --no-daemon $CONFIG 2>&1
