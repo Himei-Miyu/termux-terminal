@@ -68,16 +68,16 @@ addLine 'export XDG_CONFIG_HOME="$HOME/.config"'
 addLine 'export XDG_DATA_HOME="$HOME/.local/share"'
 addLine 'export XDG_CACHE_HOME="$HOME/.cache"'
 addLine 'alias l="ls -A"'
-addLine \
-'flock -n $PREFIX/tmp/fetch_public_ip.lock -c \'
-  while true; do
-    [ -f $HOME/.PUBLIC_IP ] || printf "OFFLINE" > $HOME/.PUBLIC_IP;
-    ping -c 1 -s 1 1.1.1.1 &> /dev/null;
-    [ $? -eq 0 ] && PUBLIC_IP="$(nslookup myip.opendns.com resolver1.opendns.com 2> /dev/null | grep Address | tail -1 | cut -d" " -f2 | tr -d " ")" || PUBLIC_IP="OFFLINE";
-    [ -z "$PUBLIC_IP" ] && printf "FETCHING" > $HOME/.PUBLIC_IP || printf "$PUBLIC_IP" > $HOME/.PUBLIC_IP;
-    sleep 3;
-  done &
-\''
+addLine 'flock -n $PREFIX/tmp/fetch_public_ip.lock -c '"'"
+addLine '  while true; do'
+addLine '    [ -f $HOME/.PUBLIC_IP ] || printf "OFFLINE" > $HOME/.PUBLIC_IP;'
+addLine '    ping -c 1 -s 1 1.1.1.1 &> /dev/null;'
+addLine '    [ $? -eq 0 ] && PUBLIC_IP="$(nslookup myip.opendns.com resolver1.opendns.com 2> /dev/null | grep Address | tail -1 | cut -d" " -f2 | tr -d " ")" || PUBLIC_IP="OFFLINE";'
+addLine '    [ -z "$PUBLIC_IP" ] || printf "$PUBLIC_IP" > $HOME/.PUBLIC_IP;'
+addLine '    sleep 3;'
+addLine '  done &'
+addLine "'"
+
 git clone https://github.com/zsh-users/zsh-autosuggestions.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
 git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
 git clone https://github.com/zdharma-continuum/fast-syntax-highlighting.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fast-syntax-highlighting
@@ -102,10 +102,10 @@ p1=$(((iw-7)/2)); q1=$((iw-7-p1))
 p2=$(((iw-${#l2_raw})/2)); q2=$((iw-${#l2_raw}-p2))
 clear
 echo "${m}${b}"
-echo "${m}|$(printf '%*s' $iw "")|"
-echo "${m}|$(printf '%*s' $p1 "")${rainbow}$(printf '%*s' $q1 "")|"
-echo "${m}|$(printf '%*s' $p2 "")${white_icon}${green_text}${white_icon}$(printf '%*s' $q2 "")|"
-echo "${m}|$(printf '%*s' $iw "")|"
+echo "${m}|$(printf '%*s' $iw '')|"
+echo "${m}|$(printf '%*s' $p1 '')${rainbow}$(printf '%*s' $q1 '')|"
+echo "${m}|$(printf '%*s' $p2 '')${white_icon}${green_text}${white_icon}$(printf '%*s' $q2 '')|"
+echo "${m}|$(printf '%*s' $iw '')|"
 echo "${m}${b}"
 
 sleep 2
