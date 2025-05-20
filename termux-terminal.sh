@@ -60,7 +60,7 @@ sleep 2
 echo "[INFO] Delete directory and file"
 sleep 2
 
-rm -rf .lyrics sockets .gitconfig .tor .PUBLIC_IP .node* .config* .termux .screen* .vim* .zsh* .oh-my* .zcom* .cache* .local* .npm*;
+rm -rf .ssh/known_hosts* .lyrics sockets .gitconfig .tor .PUBLIC_IP .node* .config* .termux .screen* .vim* .zsh* .oh-my* .zcom* .cache* .local* .npm*;
 
 ls -A
 sleep 2
