@@ -50,23 +50,25 @@ MPD_CNF_DIR="$HOME/.config/mpd"
 TERMUX_CNF="$TERMUX_DIR/termux.properties"
 
 echo "[INFO] Make backup file"
-sleep 1
+sleep 2
 
 mv $MOTD $MOTD.bak && printf "" > $MOTD;
 [ -f $TERMUX_CNF.bak ] && mv $TERMUX_CNF.bak $PREFIX/etc;
 cd $HOME;
 
+sleep 2
 echo "[INFO] Delete directory and file"
-sleep 1
+sleep 2
 
-rm -rf .gitconfig .tor .PUBLIC_IP .node* .config* .termux .screen* .vim* .zsh* .oh-my* .zcom* .cache* .local* .npm*;
+rm -rf .lyrics sockets .gitconfig .tor .PUBLIC_IP .node* .config* .termux .screen* .vim* .zsh* .oh-my* .zcom* .cache* .local* .npm*;
 
 ls -A
+sleep 2
 echo "[INFO] Create directory and file"
 sleep 3
 
 mkdir .config && cd .config;
-mkdir -p micro mpd mpd/playlists ncmpcpp htop $HOME/.termux;
+mkdir -p pulse micro mpd mpd/playlists ncmpcpp htop $HOME/.termux $HOME/sockets;
 cd mpd && touch log database pid state sticker.sql;
 [ -f $TERMUX_RCNF.bak ] && mv $TERMUX_RCNF.bak $TERMUX_CNF.bak;
 cd ..;
@@ -76,33 +78,37 @@ curl -fsSLo micro/settings.json $MICRO_CNF_URL
 curl -fsSLo htop/htoprc $HTOP_CNF_URL
 curl -fsSLo mpd/mpd.conf $MPD_CNF_URL
 curl -fsSLo ncmpcpp/config $NCMPCPP_CNF_URL
-curl -fsSLo pulse/default.pa $PULSE_CONF_URL
+curl -fsSLo pulse/default.pa $PULSE_CNF_URL
 cat $TERMUX_RDIR/mirrors/default > $TERMUX_RDIR/chosen_mirrors
 
+sleep 2
 echo "[INFO] Upgrade termux"
 sleep 3
 
 apt update;
 apt -y -o Dpkg::Options::="--force-confdef" full-upgrade;
 
+sleep 2
 echo "[INFO] Install package"
 sleep 2
 
 apt install -y ${PKGs[@]}
 
-echo "[INFO] Install PNPM global package"
+sleep 2
+echo "[INFO] Install PNPM"
 sleep 2
 
 corepack enable
 corepack prepare pnpm@latest --activate
-pnpm i -g prettier
 
+sleep 2
 echo "[INFO] Install zsh shell"
 sleep 2
 
 curl -fsSL $ZSH_SHELL_URL | bash -
 curl -fsSLo $TERMUX_FONT $FONT_URL
 
+sleep 2
 echo "[INFO] Add command to .zshrc"
 sleep 2
 
@@ -113,7 +119,6 @@ addLine 'export GPG_TTY=$(tty)'
 addLine 'export XDG_CONFIG_HOME="$HOME/.config"'
 addLine 'export XDG_DATA_HOME="$HOME/.local/share"'
 addLine 'export XDG_CACHE_HOME="$HOME/.cache"'
-addLine '[ -z "$SSH_CONNECTION" ] || export PULSE_SERVER=tcp:$SSH_CLIENT'
 addLine 'alias l="ls -A"'
 addLine 'flock -n $PREFIX/tmp/fetch_public_ip.lock -c '"'"
 addLine '  while true; do'
@@ -124,7 +129,13 @@ addLine '    [ -z "$PUBLIC_IP" ] || printf "$PUBLIC_IP" > $HOME/.PUBLIC_IP;'
 addLine '    sleep 3;'
 addLine '  done &'
 addLine "'"
+addLine 'export PNPM_HOME="/data/data/com.termux/files/home/.local/share/pnpm"'
+addLine 'case ":$PATH:" in'
+addLine '  *":$PNPM_HOME:"*) ;;'
+addLine '  *) export PATH="$PNPM_HOME:$PATH" ;;'
+addLine 'esac'
 
+sleep 2
 echo "[INFO] Install plugin zsh and micro"
 sleep 2
 
@@ -137,6 +148,7 @@ sed -i 's/^plugins=(git)$/plugins=(git zsh-autosuggestions zsh-syntax-highlighti
 
 micro -plugin install prettier quoter filemanager
 
+sleep 2
 echo "[INFO] Make folder link"
 sleep 2
 
@@ -147,6 +159,7 @@ rm -rf $HOME/.mpd
 
 termux-reload-settings
 
+sleep 2
 echo "[INFO] Reload setting termux"
 sleep 2
 
@@ -170,7 +183,7 @@ echo "${m}|$(printf '%*s' $iw '')|"
 echo "${m}${b}"
 
 sleep 2
-zsh -i -c "echo -e '[INFO] \UF0206 Restart termux'"
+zsh -i -c "sv start mpd; sv start sshd; pnpm i -g prettier; echo -e '[INFO] \UF0206 Restart termux'"
 sleep 2
 
 exit 0
