@@ -1,3 +1,22 @@
 {
-    "clipboard": "internal"
+  "*.js": {
+    "tabsize": 2
+  },
+  "*.ts": {
+    "tabsize": 2
+  },
+  "*.json": {
+    "tabsize": 2
+  },
+  "clipboard": "internal",
+  "basename": true,
+  "colorscheme": "dukeubuntu-tc",
+  "tabstospaces": true,
+  "diffgutter": true,
+  "savecursor": true,
+  "mkparents": true,
+  "qouter.enable": "on",
+  "pluginrepos": [
+    "https://raw.githubusercontent.com/himei-miyu/micro-plugin-prettier/main/repo.json"
+  ]
 }

@@ -1,9 +1,11 @@
 #!/bin/bash
 
-TERMUX_ROOT_DIR=$PREFIX/etc/termux
-TERMUX_HOME_DIR=$HOME/.termux
-TERMUX_FONT_FILE=$TERMUX_HOME_DIR/font.ttf
-MOTD_FILE=$PREFIX/etc/motd
+TERMUX_RDIR=$PREFIX/etc/termux
+TERMUX_DIR=$HOME/.termux
+TERMUX_FONT=$TERMUX_DIR/font.ttf
+MOTD=$PREFIX/etc/motd
+#gh                 : gh command before use must gh auth login "github.com > ssh > skip > web login > specify 8 char"
+#zip                : zip files
 #python-yt-dlp      : download video
 #dnsutils           : dig,nslookup command
 #mpd                : music player server
@@ -26,39 +28,49 @@ MOTD_FILE=$PREFIX/etc/motd
 #openssl-tool       : openssl command make certificate
 #gnupg              : gpg command make signature
 #git                : version control or store code
-PKGs=(python-yt-dlp dnsutils mpd mpc ncmpcpp termux-services ncurses-utils rsync htop termux-api tmux jq tree nodejs zsh micro starship neofetch openssh openssl-tool gnupg git)
+PKGs=(gh zip python-yt-dlp dnsutils mpd mpc ncmpcpp termux-services ncurses-utils rsync htop termux-api tmux jq tree nodejs zsh micro starship neofetch openssh openssl-tool gnupg git)
+#External URL
 HOST="https://himei.city"
+HOST_GITHUB="https://raw.githubusercontent.com"
+HOST_DEV="$HOST_DEV/Himei-Miyu/termux-terminal/refs/heads/main"
 FONT_URL="$HOST/fonts/FiraCodeNerdFont-Regular.ttf"
-TERMUX_CONF_URL="https://raw.githubusercontent.com/Himei-Miyu/termux-terminal/refs/heads/main/config/termux/termux.properties"
-STARSHIP_CONF_URL="https://raw.githubusercontent.com/Himei-Miyu/termux-terminal/refs/heads/main/config/starship/starship.toml"
-MICRO_CONF_URL="https://raw.githubusercontent.com/Himei-Miyu/termux-terminal/refs/heads/main/config/micro/settings.json"
-HTOP_CONF_URL="https://raw.githubusercontent.com/Himei-Miyu/termux-terminal/refs/heads/main/config/htop/htoprc"
-MPD_CONF_URL="https://raw.githubusercontent.com/Himei-Miyu/termux-terminal/refs/heads/main/config/mpd/mpd.conf"
-NCMPCPP_CONF_URL="https://raw.githubusercontent.com/Himei-Miyu/termux-terminal/refs/heads/main/config/ncmpcpp/config"
+TERMUX_CNF_URL="$HOST_DEV/config/termux/termux.properties"
+STARSHIP_CNF_URL="$HOST_DEV/config/starship/starship.toml"
+MICRO_CNF_URL="$HOST_DEV/config/micro/settings.json"
+HTOP_CNF_URL="$HOST_DEV/config/htop/htoprc"
+MPD_CNF_URL="$HOST_DEV/config/mpd/mpd.conf"
+MPD_SV_URL="$HOST_DEV/service/mpd/run"
+NCMPCPP_CNF_URL="$HOST_DEV/config/ncmpcpp/config"
+ZSH_SHELL_URL="$HOST_GITHUB/ohmyzsh/ohmyzsh/master/tools/install.sh"
+#Local dir
+TERMUX_RCNF="$PREFIX/etc/termux.properties"
+MPD_CNF_DIR="$HOME/.config/mpd"
+#Local file
+TERMUX_CNF="$TERMUX_DIR/termux.properties"
 
-ZSH_URL="https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh"
-
-mv $MOTD_FILE $MOTD_FILE.bak
-echo -e "" > "$MOTD_FILE"
-[ -f $HOME/.termux/termux.properties.bak ] && mv $HOME/.termux/termux.properties.bak $PREFIX/etc
-
-rm -rf $HOME/.PUBLIC_IP $HOME/.config* $HOME/.termux $HOME/.screen* $HOME/.vim* $HOME/.zsh* $HOME/.oh-my* $HOME/.zcom* $HOME/.cache* $HOME/.local* $HOME/.npm*
-mkdir -p $HOME/.config/micro $HOME/.config/mpd $HOME/.config/ncmpcpp $HOME/.config/htop $HOME/.termux
-[ -f $PREFIX/etc/termux.properties.bak ] && mv $PREFIX/etc/termux.properties.bak $HOME/.termux/
-curl -fsSLo $HOME/.termux/termux.properties $TERMUX_CONF_URL
-curl -fsSLo $HOME/.config/starship.toml $STARSHIP_CONF_URL
-curl -fsSLo $HOME/.config/micro/settings.json $MICRO_CONF_URL
-curl -fsSLo $HOME/.config/htop/htoprc $HTOP_CONF_URL
-curl -fsSLo $HOME/.config/mpd/mpd.conf $MPD_CONF_URL
-curl -fsSLo $HOME/.config/ncmpcpp/config $NCMPCPP_CONF_URL
-cat $TERMUX_ROOT_DIR/mirrors/default > $TERMUX_ROOT_DIR/chosen_mirrors
+mv $MOTD $MOTD.bak && printf "" > $MOTD;
+[ -f $TERMUX_CNF.bak ] && mv $TERMUX_CNF.bak $PREFIX/etc;
+cd $HOME;
+rm -rf .PUBLIC_IP .config* .termux .screen* .vim* .zsh* .oh-my* .zcom* .cache* .local* .npm*;
+mkdir .config && cd .config;
+mkdir -p micro mpd mpd/playlists ncmpcpp htop $HOME/.termux;
+cd mpd && touch database pid state sticker.sql;
+[ -f $TERMUX_RCNF.bak ] && mv $TERMUX_RCNF.bak $TERMUX_CNF.bak;
+cd ..;
+curl -fsSLo $TERMUX_CNF $TERMUX_CNF_URL
+curl -fsSLo starship.toml $STARSHIP_CNF_URL
+curl -fsSLo micro/settings.json $MICRO_CNF_URL
+curl -fsSLo htop/htoprc $HTOP_CNF_URL
+curl -fsSLo mpd/mpd.conf $MPD_CNF_URL
+curl -fsSLo ncmpcpp/config $NCMPCPP_CNF_URL
+cat $TERMUX_RDIR/mirrors/default > $TERMUX_RDIR/chosen_mirrors
 apt update;
 apt -y -o Dpkg::Options::="--force-confdef" full-upgrade;
 apt install -y ${PKGs[@]}
 corepack enable
 corepack prepare pnpm@latest --activate
-curl -fsSL $ZSH_URL | bash -
-curl -fsSLo $TERMUX_FONT_FILE $FONT_URL
+curl -fsSL $ZSH_SHELL_URL | bash -
+curl -fsSLo $TERMUX_FONT $FONT_URL
 
 addLine() { echo "$1" >> $HOME/.zshrc; }
 addLine 'neofetch'
@@ -85,7 +97,11 @@ git clone --depth 1 -- https://github.com/marlonrichert/zsh-autocomplete.git ${Z
 
 sed -i 's/^plugins=(git)$/plugins=(git zsh-autosuggestions zsh-syntax-highlighting fast-syntax-highlighting zsh-autocomplete)/' $HOME/.zshrc
 
-ln -s $PREFIX/bin/zsh $HOME/.termux/shell
+ln -s $PREFIX/bin/zsh $TERMUX_DIR/shell
+ln -s $PREFIX/var/service $TERMUX_DIR/service
+curl -fsSLo $TERMUX_DIR/service/mpd/run $MPD_SV_URL
+micro -plugin install prettier quoter filemanager
+rm -rf $HOME/.mpd
 
 termux-reload-settings
 
@@ -109,7 +125,7 @@ echo "${m}|$(printf '%*s' $iw '')|"
 echo "${m}${b}"
 
 sleep 2
-zsh -i -c "echo -e \UF0206 restart termux"
+zsh -i -c "echo -e Restart termux"
 sleep 2
-
+cd $HOME
 exit 0
