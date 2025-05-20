@@ -116,6 +116,7 @@ addLine() { echo "$1" >> $HOME/.zshrc; }
 addLine 'neofetch'
 addLine 'eval "$(starship init zsh)"'
 addLine 'export GPG_TTY=$(tty)'
+addLine 'export MPD_HOST="$HOME/sockets/music-server.sock"'
 addLine 'export XDG_CONFIG_HOME="$HOME/.config"'
 addLine 'export XDG_DATA_HOME="$HOME/.local/share"'
 addLine 'export XDG_CACHE_HOME="$HOME/.cache"'
