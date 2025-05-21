@@ -120,6 +120,8 @@ addLine 'export MPD_HOST="$HOME/sockets/music-server.sock"'
 addLine 'export XDG_CONFIG_HOME="$HOME/.config"'
 addLine 'export XDG_DATA_HOME="$HOME/.local/share"'
 addLine 'export XDG_CACHE_HOME="$HOME/.cache"'
+addLine 'export XDG_RUNTIME_DIR="$HOME/runtime"'
+#addLine '[ -z "$SSH_CONNECTION" ] && pulseaudio --load="module-native-protocol-tcp auth-anonymous=1" --exit-idle-time=-1 --daemon'
 addLine 'alias l="ls -A"'
 addLine 'flock -n $PREFIX/tmp/fetch_public_ip.lock -c '"'"
 addLine '  while true; do'

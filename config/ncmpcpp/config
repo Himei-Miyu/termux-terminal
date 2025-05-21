@@ -5,4 +5,7 @@ lyrics_directory = "~/.config/mpd/lyrics"
 mpd_music_dir = "~/Music"
 visualizer_in_stereo = yes
 visualizer_type = spectrum
+visualizer_autoscale = yes
+visualizer_data_source = "~/sockets/mpd-visualizer.fifo"
+visualizer_output_name = "Visualizer"
 seek_time = 5
