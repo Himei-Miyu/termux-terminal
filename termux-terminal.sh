@@ -141,7 +141,7 @@ addLine '      pactl load-module module-tunnel-sink sink_name=$i server=tcp:loca
 addLine '      break;'
 addLine '    }'
 addLine '  done'
-addLine '  trap 'grep -v ":$ID_TTY$" "$PA_SINK_USING_FILE" > "$PA_SINK_USING_FILE.tmp" && mv "$PA_SINK_USING_FILE.tmp" "$PA_SINK_USING_FILE"' EXIT'
+addLine '  trap '"'"'grep -v ":$ID_TTY$" "$PA_SINK_USING_FILE" > "$PA_SINK_USING_FILE.tmp" && mv "$PA_SINK_USING_FILE.tmp" "$PA_SINK_USING_FILE"'"'"' EXIT'
 addLine '}'
 addLine 'alias l="ls -A"'
 addLine 'flock -n $TMPDIR/runtime/lock/get-public-ip.lock -c '"'"
