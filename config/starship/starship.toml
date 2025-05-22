@@ -20,7 +20,7 @@ alert = '#ffff55'
 branch = '#ffffaa'
 
 [custom.publicip]
-command = "echo $(cat $HOME/.PUBLIC_IP || echo 'OFFLINE')"
+command = "echo $(cat $TMPDIR/PUBLIC-IP || echo 'OFFLINE')"
 when = 'true'
 format = "[[󰇧 ](#00ffff)$output]($style)"
 style = "r_ip"

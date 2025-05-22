@@ -56,7 +56,7 @@ AuthorizedKeysFile	.ssh/authorized_keys
 #IgnoreRhosts yes
 
 # To disable tunneled clear text passwords, change to "no" here!
-PasswordAuthentication yes
+#PasswordAuthentication yes
 #PermitEmptyPasswords no
 
 # Change to "no" to disable keyboard-interactive authentication.  Depending on
@@ -74,8 +74,8 @@ PasswordAuthentication yes
 #GSSAPIAuthentication no
 #GSSAPICleanupCredentials yes
 
-AllowAgentForwarding yes
-AllowTcpForwarding yes
+#AllowAgentForwarding yes
+#AllowTcpForwarding yes
 #GatewayPorts no
 #X11Forwarding no
 #X11DisplayOffset 10

@@ -1,4 +1,4 @@
-mpd_host = "~/sockets/music-server.sock"
+mpd_host = "/data/data/com.termux/files/usr/tmp/runtime/mpd/mpd-server.sock"
 #mpd_host = "localhost"
 #mpd_port = "6600"
 lyrics_directory = "~/.config/mpd/lyrics"
@@ -6,6 +6,6 @@ mpd_music_dir = "~/Music"
 visualizer_in_stereo = yes
 visualizer_type = spectrum
 visualizer_autoscale = yes
-visualizer_data_source = "~/sockets/mpd-visualizer.fifo"
+visualizer_data_source = "/data/data/com.termux/files/usr/tmp/runtime/mpd/mpd-visualizer.fifo"
 visualizer_output_name = "Visualizer"
 seek_time = 5
