@@ -1,9 +1,5 @@
 #!/bin/bash
 
-TERMUX_RDIR=$PREFIX/etc/termux
-TERMUX_DIR=$HOME/.termux
-TERMUX_FONT=$TERMUX_DIR/font.ttf
-MOTD=$PREFIX/etc/motd
 #gh                 : gh command before use must gh auth login "github.com > ssh > skip > web login > specify 8 char"
 #zip                : zip files
 #python-yt-dlp      : download video
@@ -44,10 +40,14 @@ NCMPCPP_CNF_URL="$HOST_DEV/config/ncmpcpp/config"
 PULSE_CNF_URL="$HOST_DEV/config/pulse/default.pa"
 ZSH_SHELL_URL="$HOST_GITHUB/ohmyzsh/ohmyzsh/master/tools/install.sh"
 #Local dir
-TERMUX_RCNF="$PREFIX/etc/termux.properties"
 MPD_CNF_DIR="$HOME/.config/mpd"
+TERMUX_RDIR=$PREFIX/etc/termux
+TERMUX_DIR=$HOME/.termux
 #Local file
+TERMUX_RCNF="$PREFIX/etc/termux.properties"
 TERMUX_CNF="$TERMUX_DIR/termux.properties"
+TERMUX_FONT=$TERMUX_DIR/font.ttf
+MOTD=$PREFIX/etc/motd
 
 echo "[INFO] Make backup file"
 sleep 2
