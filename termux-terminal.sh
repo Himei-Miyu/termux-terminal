@@ -36,6 +36,11 @@ MICRO_CNF_URL="$HOST_DEV/config/micro/settings.json"
 HTOP_CNF_URL="$HOST_DEV/config/htop/htoprc"
 MPD_CNF_URL="$HOST_DEV/config/mpd/mpd.conf"
 MPD_SV_URL="$HOST_DEV/service/mpd/run"
+
+#TODO MAKE auto set sshd config to etc/ssh/sshd_config.d via copy
+SSH_CNF1_URL="$HOST_DEV/config/ssh/ssh_config.d/00-env.conf"
+SSHD_CNF1_URL="$HOST_DEV/config/ssh/sshd_config.d/00-hosting.conf"
+SSHD_CNF2_URL="$HOST_DEV/config/ssh/sshd_config.d/01-env.conf"
 NCMPCPP_CNF_URL="$HOST_DEV/config/ncmpcpp/config"
 PULSE_CNF_URL="$HOST_DEV/config/pulse/default.pa"
 ZSH_SHELL_URL="$HOST_GITHUB/ohmyzsh/ohmyzsh/master/tools/install.sh"
@@ -126,9 +131,9 @@ addLine 'export PA_SINK_AVAILABLE=(remote-1 remote-2 remote-3)'
 addLine 'export PA_SINK_USING_FILE="$TMPDIR/runtime/pulse/sink-using.txt"'
 addLine 'pulseaudio --check || {'
 addLine '  pulseaudio --load="module-native-protocol-tcp auth-anonymous=1" --exit-idle-time=-1 --daemon'
-addLine '  for i in ${PA_SINK_AVAILABLE[@]}; do pactl load-module module-null-sink sink_name=$i; done'
+addLine '  for i in ${PA_SINK_AVAILABLE[@]}; do pactl load-module module-null-sink sink_name=$i &>/dev/null; done'
 addLine '  (IFS=","; PA_SLAVES=${PA_SINK_AVAILABLE[@]})'
-addLine '  pactl load-module module-combine-sink sink_name=remote-sink slaves=$PA_SLAVES channels=2 channel_map=front-left,front-right'
+addLine '  pactl load-module module-combine-sink sink_name=remote-sink slaves=$PA_SLAVES channels=2 channel_map=front-left,front-right &>/dev/null'
 addLine '  pactl unload-module module-null-sink'
 addLine '}'
 addLine '[[ -n "$SSH_TTY" ]] && {'
@@ -136,7 +141,7 @@ addLine '  ID_TTY="${SSH_TTY##*/}"'
 addLine '  for i in "${PA_SINK_AVAILABLE[@]}"; do'
 addLine '    grep -q "^$i:" "$PA_SINK_USING_FILE" || {'
 addLine '      echo "$i:$tty" >> "$PA_SINK_USING_FILE";'
-addLine '      pactl load-module module-tunnel-sink sink_name=$i server=tcp:localhost:$SSH_FORWARD_PORT'
+addLine '      pactl load-module module-tunnel-sink sink_name=$i server=tcp:localhost:$SSH_FORWARD_PORT &>/dev/null'
 addLine '      break;'
 addLine '    }'
 addLine '  done'
@@ -180,6 +185,9 @@ sleep 2
 ln -s $PREFIX/bin/zsh $TERMUX_DIR/shell
 ln -s $PREFIX/var/service $TERMUX_DIR/service
 curl -fsSLo $TERMUX_DIR/service/mpd/run $MPD_SV_URL
+curl -fsSLo $PREFIX/etc/ssh/sshd_config.d/00-hosting.conf $SSHD_CNF1_URL
+curl -fsSLo $PREFIX/etc/ssh/sshd_config.d/01-env.conf $SSHD_CNF2_URL
+curl -fsSLo $PREFIX/etc/ssh/ssh_config.d/00-env.conf $SSH_CNF1_URL
 rm -rf $HOME/.mpd
 
 termux-reload-settings
@@ -208,7 +216,7 @@ echo "${m}|$(printf '%*s' $iw '')|"
 echo "${m}${b}"
 
 sleep 2
-zsh -i -c "sv start mpd; sv start sshd; pnpm i -g prettier; echo -e '[INFO] \UF0206 Restart termux'"
+zsh -i -c "sv enable mpd; sv enable sshd; pnpm i -g prettier; echo -e '[INFO] \UF0206 Restart termux'"
 sleep 2
 
 exit 0
