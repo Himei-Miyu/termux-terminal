@@ -8,7 +8,7 @@ PACKAGE[NAMES]+="dnsutils "           # dig,nslookup command
 PACKAGE[NAMES]+="mpd "                # music player server
 PACKAGE[NAMES]+="mpc "                # music player client
 PACKAGE[NAMES]+="ncmpcpp "            # UI music player client
-PACKAGE[NAMES]+="terminal-services "  # sv command manage deamon
+PACKAGE[NAMES]+="termux-services "  # sv command manage deamon
 PACKAGE[NAMES]+="ncurses-utils "      # tput command check terminal screen
 PACKAGE[NAMES]+="rsync "              # send/receive file better scp
 PACKAGE[NAMES]+="htop "               # check status device
@@ -29,21 +29,21 @@ PACKAGE[NAMES]+="git "                # version control or store code
 declare -A URL
 URL[HOST]="https://himei.city"
 URL[GITHUB]="https://raw.githubusercontent.com"
-URL[MAIN]="$URL[GITHUB]/Himei-Miyu/termux-terminal/refs/heads/main"
-URL[FONT]="$URL[HOST]/fonts/FiraCodeNerdFont-Regular.ttf"
-URL[ZSH]="$URL[GITHUB]/ohmyzsh/ohmyzsh/master/tools/install.sh"
+URL[MAIN]="${URL[GITHUB]}/Himei-Miyu/termux-terminal/refs/heads/main"
+URL[FONT]="${URL[HOST]}/fonts/FiraCodeNerdFont-Regular.ttf"
+URL[ZSH]="${URL[GITHUB]}/ohmyzsh/ohmyzsh/master/tools/install.sh"
 
 declare -A URLCNF
-URLCNF[TERMUX]="$URL[MAIN]/config/termux/termux.properties"
-URLCNF[STARSHIP]="$URL[MAIN]/config/starship/starship.toml"
-URLCNF[MICRO]="$URL[MAIN]/config/micro/settings.json"
-URLCNF[HTOP]="$URL[MAIN]/config/htop/htoprc"
-URLCNF[MPD]="$URL[MAIN]/config/mpd/mpd.conf"
-URLCNF[MPDSV]="$URL[MAIN]/service/mpd/run"
-URLCNF[NCMPCPP]="$URL[MAIN]/config/ncmpcpp/config"
-URLCNF[SSH0]="$URL[MAIN]/config/ssh/ssh_config.d/00-env.conf"
-URLCNF[SSHD0]="$URL[MAIN]/config/ssh/sshd_config.d/00-hosting.conf"
-URLCNF[SSHD1]="$URL[MAIN]/config/ssh/sshd_config.d/01-env.conf"
+URLCNF[TERMUX]="${URL[MAIN]}/config/termux/termux.properties"
+URLCNF[STARSHIP]="${URL[MAIN]}/config/starship/starship.toml"
+URLCNF[MICRO]="${URL[MAIN]}/config/micro/settings.json"
+URLCNF[HTOP]="${URL[MAIN]}/config/htop/htoprc"
+URLCNF[MPD]="${URL[MAIN]}/config/mpd/mpd.conf"
+URLCNF[MPDSV]="${URL[MAIN]}/service/mpd/run"
+URLCNF[NCMPCPP]="${URL[MAIN]}/config/ncmpcpp/config"
+URLCNF[SSH0]="${URL[MAIN]}/config/ssh/ssh_config.d/00-env.conf"
+URLCNF[SSHD0]="${URL[MAIN]}/config/ssh/sshd_config.d/00-hosting.conf"
+URLCNF[SSHD1]="${URL[MAIN]}/config/ssh/sshd_config.d/01-env.conf"
 
 declare -A RCNF
 RCNF[TERMUX]="$PREFIX/etc/termux.properties"
@@ -51,7 +51,6 @@ RCNF[DIR_SV]="$PREFIX/var/service"
 RCNF[DIR_TERMUX]="$PREFIX/etc/termux"
 RCNF[DIR_SSH]="$PREFIX/etc/ssh/ssh_config.d"
 RCNF[DIR_SSHD]="$PREFIX/etc/ssh/sshd_config.d"
-
 RCNF[MOTD]="$PREFIX/etc/motd"
 
 declare -A LCNF
@@ -64,8 +63,8 @@ LCNF[FONT]="$HOME/.termux/font.ttf"
 echo "[INFO] Backup motd & termux.properties files"
 sleep 4
 
-mv $RCNF[MOTD] $RCNF[MOTD].bak && printf "" > $RCNF[MOTD];
-[ -f $LCNF[TERMUX].bak ] && mv $LCNF[TERMUX].bak $RCNF[TERMUX].bak;
+mv ${RCNF[MOTD]} ${RCNF[MOTD]}.bak && printf "" > ${RCNF[MOTD]};
+[ -f ${LCNF[TERMUX]}.bak ] && mv ${LCNF[TERMUX]}.bak ${RCNF[TERMUX]}.bak;
 
 echo "[INFO] Delete directory and file"
 sleep 4
@@ -77,23 +76,23 @@ ls -A
 echo "[INFO] Create directory and file"
 sleep 4
 
-mkdir -p .termux .config && cd $LCNF[DIRCNF];
+mkdir -p .termux .config && cd ${LCNF[DIRCNF]};
 mkdir -p pulse micro mpd mpd/playlists ncmpcpp htop;
-cd $LCNF[DIR_MPD] && touch log database pid state sticker.sql;
-[ -f $RCNF[TERMUX].bak ] && mv $RCNF[TERMUX].bak $LCNF[TERMUX].bak;
+cd ${LCNF[DIR_MPD]} && touch log database pid state sticker.sql;
+[ -f ${RCNF[TERMUX]}.bak ] && mv ${RCNF[TERMUX]}.bak ${LCNF[TERMUX]}.bak;
 ls -A
 
 echo "[INFO] Fetch config file"
 sleep 4
 
-cd $LCNF[DIRCNF];
-curl -fsSLo $LCNF[TERMUX] $URLCNF[TERMUX]
-curl -fsSLo starship.toml $URLCNF[STARSHIP]
-curl -fsSLo micro/settings.json $URLCNF[MICRO]
-curl -fsSLo htop/htoprc $URLCNF[HTOP]
-curl -fsSLo mpd/mpd.conf $URLCNF[MPD]
-curl -fsSLo ncmpcpp/config $URLCNF[NCMPCPP]
-cat $RCNF[DIR_TERMUX]/mirrors/default > $RCNF[DIR_TERMUX]/chosen_mirrors
+cd ${LCNF[DIRCNF]};
+curl -fsSLo ${LCNF[TERMUX]} ${URLCNF[TERMUX]}
+curl -fsSLo starship.toml ${URLCNF[STARSHIP]}
+curl -fsSLo micro/settings.json ${URLCNF[MICRO]}
+curl -fsSLo htop/htoprc ${URLCNF[HTOP]}
+curl -fsSLo mpd/mpd.conf ${URLCNF[MPD]}
+curl -fsSLo ncmpcpp/config ${URLCNF[NCMPCPP]}
+cat ${RCNF[DIR_TERMUX]}/mirrors/default > ${RCNF[DIR_TERMUX]}/chosen_mirrors
 
 echo "[INFO] Upgrade termux"
 sleep 4
@@ -104,7 +103,7 @@ apt -y -o Dpkg::Options::="--force-confdef" full-upgrade;
 echo "[INFO] Install package"
 sleep 4
 
-apt install -y $PACKAGE[NAMES]
+apt install -y ${PACKAGE[NAMES]}
 
 echo "[INFO] Install PNPM"
 sleep 4
@@ -115,12 +114,12 @@ corepack prepare pnpm@latest --activate
 echo "[INFO] Install ZSH"
 sleep 4
 
-curl -fsSL $URL[ZSH] | bash -
+curl -fsSL ${URL[ZSH]} | bash -
 
 echo "[INFO] Install Font"
 sleep 4
 
-curl -fsSLo $LCNF[FONT] $URL[FONT]
+curl -fsSLo ${LCNF[FONT]} ${URL[FONT]}
 
 echo "[INFO] Add command to .zshrc"
 sleep 4
@@ -201,15 +200,15 @@ sleep 4
 
 cd $HOME/.termux
 ln -s $PREFIX/bin/zsh shell
-ln -s $RCNF[DIR_SV] $LCNF[DIR_SV]
+ln -s ${RCNF[DIR_SV]} ${LCNF[DIR_SV]}
 
 echo "[INFO] Fetch config file"
 sleep 4
 
-curl -fsSLo $LCNF[DIR_SV]/mpd/run $URLCNF[MPDSV]
-curl -fsSLo $RCNF[DIR_SSH]/00-env.conf $URLCNF[SSH0]
-curl -fsSLo $RCNF[DIR_SSHD]/00-hosting.conf $URLCNF[SSHD0]
-curl -fsSLo $RCNF[DIR_SSHD]/01-env.conf $URLCNF[SSHD1]
+curl -fsSLo ${LCNF[DIR_SV]}/mpd/run ${URLCNF[MPDSV]}
+curl -fsSLo ${RCNF[DIR_SSH]}/00-env.conf ${URLCNF[SSH0]}
+curl -fsSLo ${RCNF[DIR_SSHD]}/00-hosting.conf ${URLCNF[SSHD0]}
+curl -fsSLo ${RCNF[DIR_SSHD]}/01-env.conf ${URLCNF[SSHD1]}
 rm -rf $HOME/.mpd
 
 echo "[INFO] Reload termux settings"
