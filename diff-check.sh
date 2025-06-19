@@ -3,6 +3,7 @@
 CONF_PATH=(
 "service/mpd/run"
 "starship.toml"
+"ssh/ssh_config.d"
 "ssh/sshd_config.d"
 "micro/settings.json"
 "mpd/mpd.conf"
