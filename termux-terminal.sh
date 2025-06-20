@@ -136,8 +136,8 @@ export MPD_HOST="$TMPDIR/runtime/mpd/mpd-server.sock"
 export PA_SINK_AVAILABLE=(remote-1 remote-2 remote-3 remote-4 remote-5)
 export PA_SINK_USING="$TMPDIR/runtime/pulse/sink-using.txt"
 mkdir -p $TMPDIR/runtime/mpd $TMPDIR/runtime/lock
-sv-enable mpd;
-sv-enable sshd;
+SV_DAEMON=(mpd sshd)
+for i in "${SV_DAEMON[@]}"; do sv-enable $i; done
 pulseaudio --check || {
   pulseaudio --load="module-native-protocol-tcp auth-anonymous=1" --exit-idle-time=-1 --daemon
   touch $PA_SINK_USING
@@ -158,7 +158,7 @@ pulseaudio --check || {
   &>/dev/null
   pactl unload-module module-null-sink
 }
-[[ -n "$SSH_TTY" ]] && {
+[[ -n "$SSH_FORWARD_PORT" ]] && {
   ID_TTY="${SSH_TTY##*/}"
   for i in "${PA_SINK_AVAILABLE[@]}"; do
     grep -q "^$i:" $PA_SINK_USING || {
@@ -167,16 +167,16 @@ pulseaudio --check || {
         module-tunnel-sink \
         sink_name=$i \
         server=tcp:localhost:$SSH_FORWARD_PORT \
-      &>/dev/null
+      &> /dev/null
       break;
     }
   done
-  function cleanUp() {
+  function CleanUpSSH() {
     grep -v ":$ID_TTY$" $PA_SINK_USING > $PA_SINK_USING.tmp || touch $PA_SINK_USING.tmp
     mv $PA_SINK_USING.tmp $PA_SINK_USING
     pactl unload-module "$(pactl list short modules | grep "$SSH_FORWARD_PORT" | awk '{print $1}')"
   }
-  trap "cleanUp" EXIT
+  trap "CleanUpSSH" EXIT
 }
 alias l="ls -A"
 flock -n $TMPDIR/runtime/lock/get-public-ip.lock -c '
