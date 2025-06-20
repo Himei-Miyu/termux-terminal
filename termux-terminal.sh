@@ -124,62 +124,78 @@ curl -fsSLo ${LCNF[FONT]} ${URL[FONT]}
 echo "[INFO] Add command to .zshrc"
 sleep 4
 
-addLine() { echo "$1" >> $HOME/.zshrc; }
-addLine 'neofetch'
-addLine 'eval "$(starship init zsh)"'
-addLine 'export GPG_TTY=$(tty)'
-addLine 'export XDG_CONFIG_HOME="$HOME/.config"'
-addLine 'export XDG_DATA_HOME="$HOME/.local/share"'
-addLine 'export XDG_CACHE_HOME="$HOME/.cache"'
-addLine 'export XDG_RUNTIME_DIR="$TMPDIR/runtime"'
-addLine 'export MPD_HOST="$TMPDIR/runtime/mpd/mpd-server.sock"'
-addLine 'export PA_SINK_AVAILABLE=(remote-1 remote-2 remote-3)'
-addLine 'export PA_SINK_USING_FILE="$TMPDIR/runtime/pulse/sink-using.txt"'
-addLine 'mkdir -p $TMPDIR/runtime/mpd $TMPDIR/runtime/lock'
-addLine 'sv-enable mpd;'
-addLine 'sv-enable sshd;'
-addLine 'pulseaudio --check || {'
-addLine '  pulseaudio --load="module-native-protocol-tcp auth-anonymous=1" --exit-idle-time=-1 --daemon'
-addLine '  touch $PA_SINK_USING_FILE'
-addLine '  for i in ${PA_SINK_AVAILABLE[@]}; do pactl load-module module-null-sink sink_name=$i &>/dev/null; done'
-addLine '  PA_SLAVES=$(printf "%s," "${PA_SINK_AVAILABLE[@]}")'
-addLine '  PA_SLAVES="${PA_SLAVES%,}"'
-addLine '  pactl load-module module-combine-sink sink_name=remote-sink slaves=$PA_SLAVES channels=2 channel_map=front-left,front-right &>/dev/null'
-addLine '  pactl unload-module module-null-sink'
-addLine '}'
-addLine '[[ -n "$SSH_TTY" ]] && {'
-addLine '  ID_TTY="${SSH_TTY##*/}"'
-addLine '  for i in "${PA_SINK_AVAILABLE[@]}"; do'
-addLine '    grep -q "^$i:" "$PA_SINK_USING_FILE" || {'
-addLine '      echo "$i:$ID_TTY" >> "$PA_SINK_USING_FILE";'
-addLine '      pactl load-module module-tunnel-sink sink_name=$i server=tcp:localhost:$SSH_FORWARD_PORT &>/dev/null'
-addLine '      break;'
-addLine '    }'
-addLine '  done'
-addLine '  function cleanUp() {'
-addLine '    grep -v ":$ID_TTY$" "$PA_SINK_USING_FILE" > "$PA_SINK_USING_FILE.tmp" || touch $PA_SINK_USING_FILE.tmp'
-addLine '    mv "$PA_SINK_USING_FILE.tmp" "$PA_SINK_USING_FILE"'
-addLine '    pactl list short sinks | grep -qE "tunnel" && pactl unload-module module-tunnel-sink'
-addLine '  }'
-addLine '  trap "cleanUp" EXIT'
-addLine '}'
-addLine 'alias l="ls -A"'
-addLine 'flock -n $TMPDIR/runtime/lock/get-public-ip.lock -c '"'"
-addLine 'while true; do'
-addLine '  [ -e "$TMPDIR/runtime/lock/get-public-ip.lock" ] && {'
-addLine '    [ -f $TMPDIR/PUBLIC-IP ] || printf "OFFLINE" > $TMPDIR/PUBLIC-IP;'
-addLine '    ping -c 1 -s 1 1.1.1.1 &> /dev/null;'
-addLine '    [ $? -eq 0 ] && PUBLIC_IP="$(nslookup myip.opendns.com resolver1.opendns.com 2> /dev/null | grep Address | tail -1 | cut -d" " -f2 | tr -d " ")" || PUBLIC_IP="OFFLINE";'
-addLine '    [ -z "$PUBLIC_IP" ] || printf "$PUBLIC_IP" > $TMPDIR/PUBLIC-IP;'
-addLine '  } || break;'
-addLine '  sleep 3;'
-addLine 'done &'
-addLine "'"
-addLine 'export PNPM_HOME="/data/data/com.termux/files/home/.local/share/pnpm"'
-addLine 'case ":$PATH:" in'
-addLine '  *":$PNPM_HOME:"*) ;;'
-addLine '  *) export PATH="$PNPM_HOME:$PATH" ;;'
-addLine 'esac'
+cat << 'EOF' >> $HOME/.zshrc;
+neofetch
+eval "$(starship init zsh)"
+export GPG_TTY=$(tty)
+export XDG_CONFIG_HOME="$HOME/.config"
+export XDG_DATA_HOME="$HOME/.local/share"
+export XDG_CACHE_HOME="$HOME/.cache"
+export XDG_RUNTIME_DIR="$TMPDIR/runtime"
+export MPD_HOST="$TMPDIR/runtime/mpd/mpd-server.sock"
+export PA_SINK_AVAILABLE=(remote-1 remote-2 remote-3)
+export PA_SINK_USING="$TMPDIR/runtime/pulse/sink-using.txt"
+mkdir -p $TMPDIR/runtime/mpd $TMPDIR/runtime/lock
+sv-enable mpd;
+sv-enable sshd;
+pulseaudio --check || {
+  pulseaudio --load="module-native-protocol-tcp auth-anonymous=1" --exit-idle-time=-1 --daemon
+  touch $PA_SINK_USING
+  for i in ${PA_SINK_AVAILABLE[@]}; do
+    pactl load-module \
+      module-null-sink \
+      sink_name=$i \
+    &> /dev/null;
+  done
+  PA_SLAVES=$(printf "%s," "${PA_SINK_AVAILABLE[@]}")
+  PA_SLAVES="${PA_SLAVES%,}"
+  pactl load-module \
+    module-combine-sink \
+    sink_name=remote-sink \
+    slaves=$PA_SLAVES \
+    channels=2 \
+    channel_map=front-left,front-right \
+  &>/dev/null
+  pactl unload-module module-null-sink
+}
+[[ -n "$SSH_TTY" ]] && {
+  ID_TTY="${SSH_TTY##*/}"
+  for i in "${PA_SINK_AVAILABLE[@]}"; do
+    grep -q "^$i:" $PA_SINK_USING || {
+      echo "$i:$ID_TTY" >> $PA_SINK_USING;
+      pactl load-module \
+        module-tunnel-sink \
+        sink_name=$i \
+        server=tcp:localhost:$SSH_FORWARD_PORT \
+      &>/dev/null
+      break;
+    }
+  done
+  function cleanUp() {
+    grep -v ":$ID_TTY$" $PA_SINK_USING > $PA_SINK_USING.tmp || touch $PA_SINK_USING.tmp
+    mv $PA_SINK_USING.tmp $PA_SINK_USING
+    pactl list short sinks | grep -qE "tunnel" && pactl unload-module module-tunnel-sink
+  }
+  trap "cleanUp" EXIT
+}
+alias l="ls -A"
+flock -n $TMPDIR/runtime/lock/get-public-ip.lock -c '
+  while true; do
+    [ -e "$TMPDIR/runtime/lock/get-public-ip.lock" ] && {
+      [ -f $TMPDIR/PUBLIC-IP ] || printf "OFFLINE" > $TMPDIR/PUBLIC-IP;
+      ping -c 1 -s 1 1.1.1.1 &> /dev/null;
+      [ $? -eq 0 ] && PUBLIC_IP="$(nslookup myip.opendns.com resolver1.opendns.com 2> /dev/null | grep Address | tail -1 | cut -d" " -f2 | tr -d " ")" || PUBLIC_IP="OFFLINE";
+      [ -z "$PUBLIC_IP" ] || printf "$PUBLIC_IP" > $TMPDIR/PUBLIC-IP;
+    } || break;
+  sleep 3;
+done &
+'
+export PNPM_HOME="$HOME/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+EOF
 
 echo "[INFO] Install plugin ZSH"
 sleep 4
