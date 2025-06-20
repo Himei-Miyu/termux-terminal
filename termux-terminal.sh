@@ -133,7 +133,7 @@ export XDG_DATA_HOME="$HOME/.local/share"
 export XDG_CACHE_HOME="$HOME/.cache"
 export XDG_RUNTIME_DIR="$TMPDIR/runtime"
 export MPD_HOST="$TMPDIR/runtime/mpd/mpd-server.sock"
-export PA_SINK_AVAILABLE=(remote-1 remote-2 remote-3)
+export PA_SINK_AVAILABLE=(remote-1 remote-2 remote-3 remote-4 remote-5)
 export PA_SINK_USING="$TMPDIR/runtime/pulse/sink-using.txt"
 mkdir -p $TMPDIR/runtime/mpd $TMPDIR/runtime/lock
 sv-enable mpd;
@@ -174,7 +174,7 @@ pulseaudio --check || {
   function cleanUp() {
     grep -v ":$ID_TTY$" $PA_SINK_USING > $PA_SINK_USING.tmp || touch $PA_SINK_USING.tmp
     mv $PA_SINK_USING.tmp $PA_SINK_USING
-    pactl list short sinks | grep -qE "tunnel" && pactl unload-module module-tunnel-sink
+    pactl unload-module "$(pactl list short modules | grep "$SSH_FORWARD_PORT" | awk '{print $1}')"
   }
   trap "cleanUp" EXIT
 }
