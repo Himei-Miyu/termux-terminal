@@ -1,35 +1,32 @@
 #!/bin/bash
 
-CONF_PATH=(
+TRACKING_LIST=(
 "service/mpd/run"
-"starship.toml"
-"ssh/ssh_config.d"
-"ssh/sshd_config.d"
-"micro/settings.json"
-"mpd/mpd.conf"
-"ncmpcpp/config"
-"htop/htoprc"
+"config/starship.toml"
+"config/micro/settings.json"
+"config/mpd/mpd.conf"
+"config/ncmpcpp/config"
+"config/htop/htoprc"
+"etc/ssh/ssh_config.d"
+"etc/ssh/sshd_config.d"
 )
-
-for i in ${CONF_PATH[@]}; do
-  name=$(basename "$i")
-  [[ $i =~ ^service ]] && {
-    diff $i $PREFIX/var/$i
-    test $? -gt 0 && echo "[SERVICE-DETECT] $i has changed"
-    continue
-  }
-  [[ $name =~ \.d$ ]] && {
-    diff config/$i $PREFIX/etc/$i
-    test $? -gt 0 && echo "[DIR-DETECT] $i has changed"
-    continue
-  }
-  [[ $i == "starship.toml" ]] && {
-    diff config/starship/starship.toml ~/.config/$i
-    test $? -gt 0 && echo "[CONFIG-DETECT] $i has changed"
-    continue
-  }
-  diff config/$i ~/.config/$i &> /dev/null;
-  test $? -gt 0 && echo "[CONFIG-DETECT] $i has changed"
+fnLog() { [ $1 -gt 0 ] && echo -e "\e[31m[CHANGED]\e[0m $item" || echo -e "\e[32m[PASSED]\e[0m $item"; }
+for item in ${TRACKING_LIST[@]}; do
+  case "$item" in
+    service*)
+      diff $item $PREFIX/var/$item &> /dev/null
+      fnLog $?
+      ;;
+    etc*)
+      diff $item $PREFIX/$item &> /dev/null
+      fnLog $?
+      ;;
+    config*)
+      diff $item $HOME/.$item &> /dev/null
+      fnLog $?
+      ;;
+    *)
+      echo -e "\e[31m[ERROR]\e[0m Tracking unknown : $item" && exit 1
+      ;;
+  esac
 done
-
-echo Different check completed

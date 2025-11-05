@@ -1,0 +1,5 @@
+load-module module-esound-protocol-tcp
+load-module module-native-protocol-tcp auth-anonymous=1
+load-module module-rtp-recv
+load-module module-null-sink sink_name=rtp format=s16be channels=2 rate=44100 sink_properties="device.description='RTP Multicast Sink'"
+load-module module-rtp-send source=rtp.monitor

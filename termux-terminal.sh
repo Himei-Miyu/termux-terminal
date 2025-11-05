@@ -136,8 +136,6 @@ export MPD_HOST="$TMPDIR/runtime/mpd/mpd-server.sock"
 export PA_SINK_AVAILABLE=(remote-1 remote-2 remote-3 remote-4 remote-5)
 export PA_SINK_USING="$TMPDIR/runtime/pulse/sink-using.txt"
 mkdir -p $TMPDIR/runtime/mpd $TMPDIR/runtime/lock
-SV_DAEMON=(mpd sshd)
-for i in "${SV_DAEMON[@]}"; do sv-enable $i; done
 pulseaudio --check || {
   pulseaudio --load="module-native-protocol-tcp auth-anonymous=1" --exit-idle-time=-1 --daemon
   touch $PA_SINK_USING
@@ -257,6 +255,8 @@ sleep 4
 
 echo "[INFO] Install package"
 sleep 4
+
+sv-enable mpd sshd
 
 zsh -i -c "pnpm i -g prettier; echo -e '[INFO] \UF0206 Service daemon need to restart termux!'"
 sleep 4

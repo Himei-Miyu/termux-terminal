@@ -34,16 +34,13 @@ style = "r_ip"
 [custom.localip]
 command = '''
 ifconfig 2> /dev/null | \
-sed -nE 's/^(.+):\s.*/\1:/p;s/.*inet\s(.+)\s.n.*$/\1 /p' | \
-sed -zE 's/\n//g;s/ /\n/g;s/.+:([a-z])/\1/g' | \
-grep -m 1 -E 'lo' | \
-cut -d':' -f2 \
+awk '/^[a-z].+:/ { iface=$1 } /inet / && $2 { print iface $2 }' | \
+sed -nE '/lo:/ {s/lo://;p;g}'
 '''
 when = '''
 ifconfig 2> /dev/null | \
-sed -nE 's/^(.+):\s.*/\1:/p;s/.*inet\s(.+)\s.n.*$/\1 /p' | \
-sed -zE 's/\n//g;s/ /\n/g;s/.+:([a-z])/\1/g' | \
-grep -E 'lo:.+' \
+awk '/^[a-z]/ { iface=$1 } /inet / && $2 { print iface $2 }' | \
+grep -E 'lo'
 '''
 format = '[[ ](#ccffcc)$output]($style)'
 style = 'l_ip'
@@ -52,16 +49,13 @@ ignore_timeout = true
 [custom.cellip]
 command = '''
 ifconfig 2> /dev/null | \
-sed -nE 's/^(.+):\s.*/\1:/p;s/.*inet\s(.+)\s.n.*$/\1 /p' | \
-sed -zE 's/\n//g;s/ /\n/g;s/.+:([a-z])/\1/g' | \
-grep -m 1 -E 'rmnet' | \
-cut -d':' -f2 \
+awk '/^[a-z].+:/ { iface=$1 } /inet / && $2 { print iface $2 }' | \
+sed -nE '/rmnet.+:/ {s/rmnet.+://;p;g}'
 '''
 when = '''
 ifconfig 2> /dev/null | \
-sed -nE 's/^(.+):\s.*/\1:/p;s/.*inet\s(.+)\s.n.*$/\1 /p' | \
-sed -zE 's/\n//g;s/ /\n/g;s/.+:([a-z])/\1/g' | \
-grep -E 'rmnet.+:.+' \
+awk '/^[a-z].+:/ { iface=$1 } /inet / && $2 { print iface $2 }' | \
+grep -E 'rmnet_data'
 '''
 format = '[[󰢾 ](#ccffcc)$output]($style) '
 style = 'l_ip'
@@ -70,16 +64,13 @@ ignore_timeout = true
 [custom.wlanip]
 command = '''
 ifconfig 2> /dev/null | \
-sed -nE 's/^(.+):\s.*/\1:/p;s/.*inet\s(.+)\s.n.*$/\1 /p' | \
-sed -zE 's/\n//g;s/ /\n/g;s/.+:([a-z])/\1/g' | \
-grep -m 1 -E 'wlan' | \
-cut -d':' -f2 \
+awk '/^[a-z].+:/ { iface=$1 } /inet / && $2 { print iface $2 }' | \
+sed -nE '/wlan.+:/ {s/wlan.+://;p;g}'
 '''
 when = '''
 ifconfig 2> /dev/null | \
-sed -nE 's/^(.+):\s.*/\1:/p;s/.*inet\s(.+)\s.n.*$/\1 /p' | \
-sed -zE 's/\n//g;s/ /\n/g;s/.+:([a-z])/\1/g' | \
-grep -E 'wlan.+:.+' \
+awk '/^[a-z].+:/ { iface=$1 } /inet / && $2 { print iface $2 }' | \
+grep -E 'wlan'
 '''
 format = '[[󰖩 ](#ccffcc)$output]($style) '
 style = 'l_ip'
