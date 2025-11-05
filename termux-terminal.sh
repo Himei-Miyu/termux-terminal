@@ -35,15 +35,15 @@ URL[ZSH]="${URL[GITHUB]}/ohmyzsh/ohmyzsh/master/tools/install.sh"
 
 declare -A URLCNF
 URLCNF[TERMUX]="${URL[MAIN]}/config/termux/termux.properties"
-URLCNF[STARSHIP]="${URL[MAIN]}/config/starship/starship.toml"
+URLCNF[STARSHIP]="${URL[MAIN]}/config/starship.toml"
 URLCNF[MICRO]="${URL[MAIN]}/config/micro/settings.json"
 URLCNF[HTOP]="${URL[MAIN]}/config/htop/htoprc"
 URLCNF[MPD]="${URL[MAIN]}/config/mpd/mpd.conf"
 URLCNF[MPDSV]="${URL[MAIN]}/service/mpd/run"
 URLCNF[NCMPCPP]="${URL[MAIN]}/config/ncmpcpp/config"
-URLCNF[SSH0]="${URL[MAIN]}/config/ssh/ssh_config.d/00-env.conf"
-URLCNF[SSHD0]="${URL[MAIN]}/config/ssh/sshd_config.d/00-hosting.conf"
-URLCNF[SSHD1]="${URL[MAIN]}/config/ssh/sshd_config.d/01-env.conf"
+URLCNF[SSH0]="${URL[MAIN]}/etc/ssh/ssh_config.d/00-env.conf"
+URLCNF[SSHD0]="${URL[MAIN]}/etc/ssh/sshd_config.d/00-hosting.conf"
+URLCNF[SSHD1]="${URL[MAIN]}/etc/ssh/sshd_config.d/01-env.conf"
 
 declare -A RCNF
 RCNF[TERMUX]="$PREFIX/etc/termux.properties"
@@ -256,9 +256,8 @@ sleep 4
 echo "[INFO] Install package"
 sleep 4
 
-sv-enable mpd sshd
-
-zsh -i -c "pnpm i -g prettier; echo -e '[INFO] \UF0206 Service daemon need to restart termux!'"
+cd $HOME
+zsh -i -c 'SV_LIST=(mpd sshd); for v in "${SV_LIST[@]}"; do sv-enable $v; done; pnpm i -g prettier; echo -e "[INFO] \UF0206 Service daemon need to restart termux!"'
 sleep 4
 
 echo "[INFO] Starting Preview ZSH"
