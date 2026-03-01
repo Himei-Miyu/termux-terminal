@@ -108,6 +108,7 @@ apt install -y ${PACKAGE[NAMES]}
 echo "[INFO] Install PNPM"
 sleep 4
 
+npm i -g corepack
 corepack enable
 corepack prepare pnpm@latest --activate
 
