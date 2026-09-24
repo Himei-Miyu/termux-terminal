@@ -25,128 +25,185 @@ declare -A pkg_kv=(
   [openssl-tool]="OpenSSL CLI"           # Cryptography and SSL certificate tools
   [gnupg]="GnuPG encryption"             # Encryption and digital signature tools
   [git]="Version control"                # Track code changes and version control
+  [nginx]="Web server"
+  [pnpm]=""
 )
 
-domain1="https://himei.city"
-domain2="https://raw.githubusercontent.com"
-domain3="https://github.com"
-gitmain="$domain2/Himei-Miyu/termux-terminal/refs/heads/main"
+declare -A dirs
 
-declare -A url_kv=(
-  ["$domain1/fonts/FiraCodeNerdFont-Regular.ttf"]="0"                # 0 Font file
-  ["$gitmain/config/htop/htoprc"]="1"                                # 1 Custom view process file
-  ["$gitmain/config/micro/settings.json"]="2"                        # 2 Config micro editor file
-  ["$gitmain/config/mpd/mpd.conf"]="3"                               # 3 Config music player daemon file
-  ["$gitmain/config/ncmpcpp/config"]="4"                             # 4 Config ui music player file
-  ["$gitmain/config/starship.toml"]="5"                              # 5 Custom prompt shell file
-  ["$gitmain/config/termux/termux.properties"]="6"                   # 6 Termux config file
-  ["$gitmain/etc/ssh/ssh_config.d/00-env.conf"]="7"                  # 7 SSH config file
-  ["$gitmain/etc/ssh/sshd_config.d/00-hosting.conf"]="8"             # 8 SSH server config file
-  ["$gitmain/etc/ssh/sshd_config.d/01-env.conf"]="9"                 # 9 SSH server config file
-  ["$gitmain/service/mpd/run"]="10"                                  # 10 Script music player service daemon file
-  ["$domain2/ohmyzsh/ohmyzsh/master/tools/install.sh"]="11"          # 11 Framework zsh
-)
-declare -A cnf_kv=(
-  ["$HOME/.config"]="0"                                              # 0 Config directory
-  ["$HOME/.config/mpd"]="1"                                          # 1 Config mpd directory
-  ["$HOME/.termux/font.ttf"]="2"                                     # 2 Termux font file
-  ["$HOME/.termux/service"]="3"                                      # 3 Service daemon directory
-  ["$HOME/.termux/termux.properties"]="4"                            # 4 Termux config file
-  ["$PREFIX/etc/motd"]="5"                                           # 5 Motd file
-  ["$PREFIX/etc/ssh/ssh_config.d"]="6"                               # 6 SSH config directory
-  ["$PREFIX/etc/ssh/sshd_config.d"]="7"                              # 7 SSH server config directory
-  ["$PREFIX/etc/termux"]="8"                                         # 8 Termux pkg mirror directory
-  ["$PREFIX/var/service"]="9"                                        # 9 Service daemon directory
-)
+# Variable host directory path
+dirs[host]="https://himei.city"
+dirs[host_font]=${dirs[dns_host]}/fonts
 
-kvToIdx() {
-  declare -n ref="$1_kv"
-  mapfile -t $1_idx < <(printf "%s\n" "${!ref[@]}" | sort)
-}
+# Variable github directory path
+dirs[gh]="https://github.com"
+dirs[gh_raw]="https://raw.githubusercontent.com"
+dirs[gh_main]=${dirs[gh_raw]}/Himei-Miyu/termux-terminal/refs/heads/main
+dirs[gh_cnf]=${dirs[gh_main]}/config
+dirs[gh_etc]=${dirs[gh_main]}/etc
+dirs[gh_run]=${dirs[gh_main]}/service
 
-log() {
-  echo -e "[INFO] $@"
-  sleep 5
-}
+# Variable user directory path
+dirs[usr_cnf]=$HOME/.config
+dirs[usr_mpd]=${dirs[usr_cnf]}/mpd
+dirs[usr_tmx]=$HOME/.termux
+dirs[usr_run]=${dirs[usr_tmx]}/service
 
-for name in pkg url cnf; do kvToIdx $name; done
+# Variable system directory path
+dirs[sys_etc]=$PREFIX/etc
+dirs[sys_ssh]=${dirs[sys_etc]}/ssh
+dirs[sys_sshcnf]=${dirs[sys_ssh]}/ssh_config.d
+dirs[sys_sshdcnf]=${dirs[sys_ssh]}/sshd_config.d
+dirs[sys_run]=$PREFIX/var/service
+dirs[sys_tmx]=${dirs[sys_etc]}/termux
 
-echo "${!pkg_kv[@]}"
-exit 1
+# Variable file path
+sys_motd=${dirs[sys_etc]}/motd
+sys_resolv=${dirs[sys_etc]}/resolv.conf
+sys_tmx_mir_def=${dirs[sys_tmx]}/mirrors/default
+sys_tmx_mir=${dirs[sys_tmx]}/chosen_mirrors
+sys_zsh=$PREFIX/bin/zsh
+usr_tmx_prop=${dirs[usr_tmx]}/termux.properties
+gh_tmx_prop=${dirs[gh_cnf]}/termux/termux.properties
+usr_starship_cnf=${dirs[usr_cnf]}/starship.toml
+gh_starship_cnf=${dirs[gh_cnf]}/starship.toml
+usr_micro_cnf=${dirs[usr_cnf]}/micro/settings.json
+gh_micro_cnf=${dirs[gh_cnf]}/micro/settings.json
+usr_htop_cnf=${dirs[usr_cnf]}/htop/htoprc
+gh_htop_cnf=${dirs[gh_cnf]}/htop/htoprc
+usr_mpd_cnf=${dirs[usr_cnf]}/mpd/mpd.conf
+gh_mpd_cnf=${dirs[gh_cnf]}/mpd/mpd.conf
+usr_nginx_cnf=${dirs[usr_cnf]}/nginx/nginx.conf
+gh_nginx_cnf=${dirs[gh_cnf]}/nginx/nginx.conf
+usr_ncmpcpp_cnf=${dirs[usr_cnf]}/ncmpcpp/config
+gh_ncmpcpp_cnf=${dirs[gh_cnf]}/ncmpcpp/config
+sys_ssh_00_cnf=${dirs[sys_sshcnf]}/ssh/ssh_config.d/00-env.conf
+gh_ssh_00_cnf=${dirs[gh_etc]}/ssh/ssh_config.d/00-env.conf
+sys_sshd_00_cnf=${dirs[sys_sshdcnf]}/ssh/sshd_config.d/00-hosting.conf
+gh_sshd_00_cnf=${dirs[gh_etc]}/ssh/sshd_config.d/00-hosting.conf
+sys_sshd_01_cnf=${dirs[sys_sshdcnf]}/ssh/sshd_config.d/01-env.conf
+gh_sshd_01_cnf=${dirs[gh_etc]}/ssh/sshd_config.d/01-env.conf
+sys_mpd_run=${dirs[sys_run]}/mpd/run
+gh_mpd_run=${dirs[gh_run]}/mpd/run
+sys_nginx_run=${dirs[sys_run]}/nginx/run
+gh_nginx_run=${dirs[gh_run]}/nginx/run
+sys_sshd_run=${dirs[sys_run]}/sshd/run
+gh_sshd_run=${dirs[gh_run]}/sshd/run
+sys_svlogger=$PREFIX/share/termux-services/svlogger
+gh_log_run=${dirs[gh_run]}/log/run
+usr_font=${dirs[usr_tmx]}/font.ttf
+host_font=${dirs[host_font]}/FiraCodeNerdFont-Regular.ttf
+gh_ohmyzsh=${dirs[gh_raw]}/ohmyzsh/ohmyzsh/master/tools/install.sh
+
+log() { echo -e "[INFO] $@"; sleep 5; }
 
 log "Backup motd file"
 
 # Backup default motd and replace empty motd
 cd $HOME
-mv ${cnf_idx[5]} ${cnf_idx[5]}.bak && :> ${cnf_idx[5]};
+mv $sys_motd $sys_motd.bak && :> $sys_motd;
 
-log "Delete local files"
+log "Delete user files"
 
 rm -rf .ssh/known_hosts* .lyrics .gitconfig .tor .node* .config* .termux .screen* .vim* .zsh* .oh-my* .zcom* .cache* .local* .npm* .mpd;
 ls -A
 
-log "Create local config files"
+read -p "[DEBUG] Breakpoint 1/6\n[DEBUG] please any key to continue..."
+
+log "Create user config files"
 
 mkdir -p .termux .config
 
 # Change working path to .config directory
-cd ${cnf_idx[0]};
-mkdir -p pulse micro mpd mpd/playlists ncmpcpp htop;
+cd ${dirs[usr_cnf]};
+mkdir -p pulse micro mpd mpd/playlists ncmpcpp htop nginx;
 
 # Change working path to .config/mpd directory
-cd ${cnf_idx[1]}
+cd ${dirs[usr_mpd]}
 touch log database pid state sticker.sql;
 
-log "Download config files before pkg update"
-
-# Change working path to .config directory
-cd ${cnf_idx[0]};
-
-# Download termux config
-curl -fsSLo ${cnf_idx[4]} ${url_idx[6]}
-
-# Download prompt shell config
-curl -fsSLo starship.toml ${url_idx[5]}
-
-# Download micro editor config
-curl -fsSLo micro/settings.json ${url_idx[2]}
-
-# Download view process config
-curl -fsSLo htop/htoprc ${url_idx[1]}
-
-# Download music player daemon config
-curl -fsSLo mpd/mpd.conf ${url_idx[3]}
-
-# Downlaod music player ui config
-curl -fsSLo ncmpcpp/config ${url_idx[4]}
-
 # Replace termux pkg mirror with default cloudflare server
-cat ${cnf_idx[8]}/mirrors/default > ${cnf_idx[8]}/chosen_mirrors
+cat $sys_tmx_mir_def > $sys_tmx_mir
+
+log "Setting dns"
+
+printf "192.168.2.20\n1.1.1.1" > $sys_resolv
 
 log "Update & upgrade termux"
 
 apt update;
 apt -y -o Dpkg::Options::="--force-confdef" full-upgrade;
 
+read -p "[DEBUG] Breakpoint 2/6\n[DEBUG] please any key to continue..."
+
 log "Install packages"
 
 pkg install -y "${!pkg_kv[@]}"
 
-log "Install pnpm by corepack"
+read -p "[DEBUG] Breakpoint 3/6\n[DEBUG] please any key to continue..."
 
-npm i -g corepack
-corepack enable
-corepack prepare pnpm@latest --activate
+log "Create symbolic link"
 
-log "Install ohmyzsh framework"
+# Termux use zsh shell default on startup
+cd ${dirs[usr_tmx]}
+ln -s $sys_zsh shell
 
-# Download ohmyzsh framework
-curl -fsSL ${url_idx[11]} | bash -
+# link service daemon to ~/.termux/service directory
+ln -s ${dirs[sys_run]} ${dirs[usr_run]}
+ls -A
+
+read -p "[DEBUG] Breakpoint 4/6\n[DEBUG] please any key to continue..."
+
+log "Download config files"
+
+curl -fsSLo $usr_tmx_prop $gh_tmx_prop
+curl -fsSLo $usr_starship_cnf $gh_starship_cnf
+curl -fsSLo $usr_micro_cnf $gh_micro_cnf
+curl -fsSLo $usr_htop_cnf $gh_htop_cnf
+curl -fsSLo $usr_mpd_cnf $gh_mpd_cnf
+curl -fsSLo $usr_nginx_cnf $gh_nginx_cnf
+curl -fsSLo $usr_ncmpcpp_cnf $gh_ncmpcpp_cnf
+curl -fsSLo $sys_ssh_00_cnf $gh_ssh_00_cnf
+curl -fsSLo $sys_sshd_00_cnf $gh_sshd_00_cnf
+curl -fsSLo $sys_sshd_01_cnf $gh_sshd_01_cnf
+
+log "Download service daemon files"
+
+curl -fsSLo $sys_mpd_run $gh_mpd_run
+curl -fsSLo $sys_nginx_run $gh_nginx_run
+curl -fsSLo $sys_sshd_run $gh_sshd_run
+
+log "Create symbolic link service daemon logs"
+
+cd $TMPDIR
+curl -fsSL $gh_log_run > run
+ln -s $sys_svlogger run
+
+for f in "${dirs[sys_run]}/*"; do
+  rm $sys_run$f/log/run;
+  cp run $sys_run$f/log/;
+done
 
 log "Install Font"
 
-# Download font
-curl -fsSLo ${cnf_idx[2]} ${url_idx[0]}
+curl -fsSLo $usr_font $host_font
+
+log "Install micro editor plugins"
+
+micro -plugin install prettier quoter filemanager
+
+log "Install ohmyzsh framework"
+
+sh -c "$(curl -fsSL $gh_ohmyzsh)"
+
+log "Install ohmyzsh plugins"
+
+plugins=${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins
+git clone ${dirs[gh]}/zsh-users/zsh-autosuggestions.git $plugins/zsh-autosuggestions
+git clone ${dirs[gh]}/zdharma-continuum/fast-syntax-highlighting.git $plugins/fast-syntax-highlighting
+sed -i 's/^plugins=(git)$/plugins=(git zsh-autosuggestions fast-syntax-highlighting)/' $HOME/.zshrc
+
+read -p "[DEBUG] Breakpoint 5/6\n[DEBUG] please any key to continue..."
 
 log "Install script to .zshrc"
 
@@ -222,37 +279,6 @@ case ":$PATH:" in
 esac
 EOF
 
-log "Install zsh plugins"
-
-plugins=${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins
-
-git clone $domain3/zsh-users/zsh-autosuggestions.git $plugins/zsh-autosuggestions
-git clone $domain3/zsh-users/zsh-syntax-highlighting.git $plugins/zsh-syntax-highlighting
-git clone $domain3/zdharma-continuum/fast-syntax-highlighting.git $plugins/fast-syntax-highlighting
-git clone --depth 1 -- $domain3/marlonrichert/zsh-autocomplete.git $plugins/zsh-autocomplete
-sed -i 's/^plugins=(git)$/plugins=(git zsh-autosuggestions zsh-syntax-highlighting fast-syntax-highlighting zsh-autocomplete)/' $HOME/.zshrc
-
-log "Install micro editor plugins"
-
-micro -plugin install prettier quoter filemanager
-
-log "Create symbolic link"
-
-cd $HOME/.termux
-
-# Termux use zsh shell default on startup
-ln -s $PREFIX/bin/zsh shell
-
-# link service daemon to ~/.termux/service directory
-ln -s ${cnf_idx[9]} ${cnf_idx[3]}
-
-log "Download config files after pkg update"
-
-curl -fsSLo ${cnf_idx[3]}/mpd/run ${url_idx[10]}
-curl -fsSLo ${cnf_idx[6]}/00-env.conf ${url_idx[7]}
-curl -fsSLo ${cnf_idx[7]}/00-hosting.conf ${url_idx[8]}
-curl -fsSLo ${cnf_idx[7]}/01-env.conf ${url_idx[9]}
-
 log "Termux reload settings"
 
 termux-reload-settings
@@ -279,12 +305,14 @@ echo "${m}|$(printf '%*s' $iw '')|"
 echo "${m}${b}"
 sleep 5
 
-log"Install package additional"
+log "Install package additional"
 
 cd $HOME
-zsh -i -c 'sv_list=(mpd sshd); for v in "${sv_list[@]}"; do sv-enable $v; done; pnpm i -g prettier prettier-plugin-tailwindcss; echo -e "[INFO] \UF0206 Service daemon need to restart termux!"'
+zsh -i -l -c 'sv_list=(mpd sshd); for v in "${sv_list[@]}"; do sv-enable $v; done; pnpm i -g prettier prettier-plugin-tailwindcss; echo -e "[INFO] \UF0206 Service daemon need to restart termux!"'
 sleep 5
+
+read -p "[DEBUG] Breakpoint 6/6\n[DEBUG] please any key to continue..."
 
 log "Restarting"
 
-zsh -i && exit 0
+zsh -i -l && exit 0
