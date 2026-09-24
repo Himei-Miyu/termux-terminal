@@ -1,129 +1,154 @@
 #!/bin/bash
 
-declare -A PACKAGE
-PACKAGE[NAMES]+="gh "                 # gh command before use must gh auth login "github.com > ssh > skip > web login > specify 8 char"
-PACKAGE[NAMES]+="zip "                # zip files
-PACKAGE[NAMES]+="python-yt-dlp "      # download video
-PACKAGE[NAMES]+="dnsutils "           # dig,nslookup command
-PACKAGE[NAMES]+="mpd "                # music player server
-PACKAGE[NAMES]+="mpc "                # music player client
-PACKAGE[NAMES]+="ncmpcpp "            # UI music player client
-PACKAGE[NAMES]+="termux-services "  # sv command manage deamon
-PACKAGE[NAMES]+="ncurses-utils "      # tput command check terminal screen
-PACKAGE[NAMES]+="rsync "              # send/receive file better scp
-PACKAGE[NAMES]+="htop "               # check status device
-PACKAGE[NAMES]+="termux-api "         # utility tool termux with android
-PACKAGE[NAMES]+="tmux "               # multi screen in terminal
-PACKAGE[NAMES]+="jq "                 # convert json format
-PACKAGE[NAMES]+="tree "               # list dir with tree format
-PACKAGE[NAMES]+="nodejs "             # runtime node server
-PACKAGE[NAMES]+="zsh "                # terminal
-PACKAGE[NAMES]+="micro "              # editor like vscode
-PACKAGE[NAMES]+="starship "           # beautiful terminal
-PACKAGE[NAMES]+="neofetch "           # show type system
-PACKAGE[NAMES]+="openssh "            # ssh server/remote
-PACKAGE[NAMES]+="openssl-tool "       # openssl command make certificate
-PACKAGE[NAMES]+="gnupg "              # gpg command make signature
-PACKAGE[NAMES]+="git "                # version control or store code
+declare -A pkg_kv=(
+  [gh]="GitHub CLI"                      # Manage GitHub repositories from terminal
+  [zip]="ZIP compression"                # Compress and extract zip files
+  [python-yt-dlp]="YouTube downloader"   # Download videos from YouTube
+  [dnsutils]="DNS utilities"             # Check DNS tools like dig and nslookup
+  [mpd]="Music Player Daemon"            # Background music player server
+  [mpc]="MPD client"                     # Command-line music player controller
+  [ncmpcpp]="Ncurses MPD client"         # Terminal-based music player interface
+  [termux-services]="Termux services"    # Manage background services in Termux
+  [ncurses-utils]="Ncurses utils"        # Terminal screen management utilities
+  [rsync]="File sync utility"            # Synchronize and backup files
+  [htop]="Process viewer"                # Real-time system resource monitor
+  [termux-api]="Android API access"      # Access Android hardware features
+  [tmux]="Terminal multiplexer"          # Split and manage terminal sessions
+  [jq]="JSON processor"                  # Parse and manipulate JSON data
+  [tree]="Directory tree viewer"         # Display folder structure as a tree
+  [nodejs]="JavaScript runtime"          # Run JavaScript applications
+  [zsh]="Z shell"                        # Feature-rich alternative shell
+  [micro]="Text editor"                  # Modern and easy-to-use text editor
+  [starship]="Prompt customizer"         # Cross-shell prompt customizer
+  [neofetch]="System info"               # Display system information and logo
+  [openssh]="SSH client/server"          # Secure remote connection tools
+  [openssl-tool]="OpenSSL CLI"           # Cryptography and SSL certificate tools
+  [gnupg]="GnuPG encryption"             # Encryption and digital signature tools
+  [git]="Version control"                # Track code changes and version control
+)
 
-declare -A URL
-URL[HOST]="https://himei.city"
-URL[GITHUB]="https://raw.githubusercontent.com"
-URL[MAIN]="${URL[GITHUB]}/Himei-Miyu/termux-terminal/refs/heads/main"
-URL[FONT]="${URL[HOST]}/fonts/FiraCodeNerdFont-Regular.ttf"
-URL[ZSH]="${URL[GITHUB]}/ohmyzsh/ohmyzsh/master/tools/install.sh"
+domain1="https://himei.city"
+domain2="https://raw.githubusercontent.com"
+domain3="https://github.com"
+gitmain="$domain2/Himei-Miyu/termux-terminal/refs/heads/main"
 
-declare -A URLCNF
-URLCNF[TERMUX]="${URL[MAIN]}/config/termux/termux.properties"
-URLCNF[STARSHIP]="${URL[MAIN]}/config/starship.toml"
-URLCNF[MICRO]="${URL[MAIN]}/config/micro/settings.json"
-URLCNF[HTOP]="${URL[MAIN]}/config/htop/htoprc"
-URLCNF[MPD]="${URL[MAIN]}/config/mpd/mpd.conf"
-URLCNF[MPDSV]="${URL[MAIN]}/service/mpd/run"
-URLCNF[NCMPCPP]="${URL[MAIN]}/config/ncmpcpp/config"
-URLCNF[SSH0]="${URL[MAIN]}/etc/ssh/ssh_config.d/00-env.conf"
-URLCNF[SSHD0]="${URL[MAIN]}/etc/ssh/sshd_config.d/00-hosting.conf"
-URLCNF[SSHD1]="${URL[MAIN]}/etc/ssh/sshd_config.d/01-env.conf"
+declare -A url_kv=(
+  ["$domain1/fonts/FiraCodeNerdFont-Regular.ttf"]="0"                # 0 Font file
+  ["$gitmain/config/htop/htoprc"]="1"                                # 1 Custom view process file
+  ["$gitmain/config/micro/settings.json"]="2"                        # 2 Config micro editor file
+  ["$gitmain/config/mpd/mpd.conf"]="3"                               # 3 Config music player daemon file
+  ["$gitmain/config/ncmpcpp/config"]="4"                             # 4 Config ui music player file
+  ["$gitmain/config/starship.toml"]="5"                              # 5 Custom prompt shell file
+  ["$gitmain/config/termux/termux.properties"]="6"                   # 6 Termux config file
+  ["$gitmain/etc/ssh/ssh_config.d/00-env.conf"]="7"                  # 7 SSH config file
+  ["$gitmain/etc/ssh/sshd_config.d/00-hosting.conf"]="8"             # 8 SSH server config file
+  ["$gitmain/etc/ssh/sshd_config.d/01-env.conf"]="9"                 # 9 SSH server config file
+  ["$gitmain/service/mpd/run"]="10"                                  # 10 Script music player service daemon file
+  ["$domain2/ohmyzsh/ohmyzsh/master/tools/install.sh"]="11"          # 11 Framework zsh
+)
+declare -A cnf_kv=(
+  ["$HOME/.config"]="0"                                              # 0 Config directory
+  ["$HOME/.config/mpd"]="1"                                          # 1 Config mpd directory
+  ["$HOME/.termux/font.ttf"]="2"                                     # 2 Termux font file
+  ["$HOME/.termux/service"]="3"                                      # 3 Service daemon directory
+  ["$HOME/.termux/termux.properties"]="4"                            # 4 Termux config file
+  ["$PREFIX/etc/motd"]="5"                                           # 5 Motd file
+  ["$PREFIX/etc/ssh/ssh_config.d"]="6"                               # 6 SSH config directory
+  ["$PREFIX/etc/ssh/sshd_config.d"]="7"                              # 7 SSH server config directory
+  ["$PREFIX/etc/termux"]="8"                                         # 8 Termux pkg mirror directory
+  ["$PREFIX/var/service"]="9"                                        # 9 Service daemon directory
+)
 
-declare -A RCNF
-RCNF[TERMUX]="$PREFIX/etc/termux.properties"
-RCNF[DIR_SV]="$PREFIX/var/service"
-RCNF[DIR_TERMUX]="$PREFIX/etc/termux"
-RCNF[DIR_SSH]="$PREFIX/etc/ssh/ssh_config.d"
-RCNF[DIR_SSHD]="$PREFIX/etc/ssh/sshd_config.d"
-RCNF[MOTD]="$PREFIX/etc/motd"
+kvToIdx() {
+  declare -n ref="$1_kv"
+  mapfile -t $1_idx < <(printf "%s\n" "${!ref[@]}" | sort)
+}
 
-declare -A LCNF
-LCNF[DIRCNF]="$HOME/.config"
-LCNF[DIR_MPD]="$HOME/.config/mpd"
-LCNF[DIR_SV]="$HOME/.termux/service"
-LCNF[TERMUX]="$HOME/.termux/termux.properties"
-LCNF[FONT]="$HOME/.termux/font.ttf"
+log() {
+  echo -e "[INFO] $@"
+  sleep 5
+}
 
-echo "[INFO] Backup motd & termux.properties files"
-sleep 4
+for name in pkg url cnf; do kvToIdx $name; done
 
-mv ${RCNF[MOTD]} ${RCNF[MOTD]}.bak && printf "" > ${RCNF[MOTD]};
-[ -f ${LCNF[TERMUX]}.bak ] && mv ${LCNF[TERMUX]}.bak ${RCNF[TERMUX]}.bak;
+echo "${!pkg_kv[@]}"
+exit 1
 
-echo "[INFO] Delete directory and file"
-sleep 4
+log "Backup motd file"
 
+# Backup default motd and replace empty motd
 cd $HOME
-rm -rf .ssh/known_hosts* .lyrics .gitconfig .tor .node* .config* .termux .screen* .vim* .zsh* .oh-my* .zcom* .cache* .local* .npm*;
+mv ${cnf_idx[5]} ${cnf_idx[5]}.bak && :> ${cnf_idx[5]};
+
+log "Delete local files"
+
+rm -rf .ssh/known_hosts* .lyrics .gitconfig .tor .node* .config* .termux .screen* .vim* .zsh* .oh-my* .zcom* .cache* .local* .npm* .mpd;
 ls -A
 
-echo "[INFO] Create directory and file"
-sleep 4
+log "Create local config files"
 
-mkdir -p .termux .config && cd ${LCNF[DIRCNF]};
+mkdir -p .termux .config
+
+# Change working path to .config directory
+cd ${cnf_idx[0]};
 mkdir -p pulse micro mpd mpd/playlists ncmpcpp htop;
-cd ${LCNF[DIR_MPD]} && touch log database pid state sticker.sql;
-[ -f ${RCNF[TERMUX]}.bak ] && mv ${RCNF[TERMUX]}.bak ${LCNF[TERMUX]}.bak;
-ls -A
 
-echo "[INFO] Fetch config file"
-sleep 4
+# Change working path to .config/mpd directory
+cd ${cnf_idx[1]}
+touch log database pid state sticker.sql;
 
-cd ${LCNF[DIRCNF]};
-curl -fsSLo ${LCNF[TERMUX]} ${URLCNF[TERMUX]}
-curl -fsSLo starship.toml ${URLCNF[STARSHIP]}
-curl -fsSLo micro/settings.json ${URLCNF[MICRO]}
-curl -fsSLo htop/htoprc ${URLCNF[HTOP]}
-curl -fsSLo mpd/mpd.conf ${URLCNF[MPD]}
-curl -fsSLo ncmpcpp/config ${URLCNF[NCMPCPP]}
-cat ${RCNF[DIR_TERMUX]}/mirrors/default > ${RCNF[DIR_TERMUX]}/chosen_mirrors
+log "Download config files before pkg update"
 
-echo "[INFO] Upgrade termux"
-sleep 4
+# Change working path to .config directory
+cd ${cnf_idx[0]};
+
+# Download termux config
+curl -fsSLo ${cnf_idx[4]} ${url_idx[6]}
+
+# Download prompt shell config
+curl -fsSLo starship.toml ${url_idx[5]}
+
+# Download micro editor config
+curl -fsSLo micro/settings.json ${url_idx[2]}
+
+# Download view process config
+curl -fsSLo htop/htoprc ${url_idx[1]}
+
+# Download music player daemon config
+curl -fsSLo mpd/mpd.conf ${url_idx[3]}
+
+# Downlaod music player ui config
+curl -fsSLo ncmpcpp/config ${url_idx[4]}
+
+# Replace termux pkg mirror with default cloudflare server
+cat ${cnf_idx[8]}/mirrors/default > ${cnf_idx[8]}/chosen_mirrors
+
+log "Update & upgrade termux"
 
 apt update;
 apt -y -o Dpkg::Options::="--force-confdef" full-upgrade;
 
-echo "[INFO] Install package"
-sleep 4
+log "Install packages"
 
-apt install -y ${PACKAGE[NAMES]}
+pkg install -y "${!pkg_kv[@]}"
 
-echo "[INFO] Install PNPM"
-sleep 4
+log "Install pnpm by corepack"
 
 npm i -g corepack
 corepack enable
 corepack prepare pnpm@latest --activate
 
-echo "[INFO] Install ZSH"
-sleep 4
+log "Install ohmyzsh framework"
 
-curl -fsSL ${URL[ZSH]} | bash -
+# Download ohmyzsh framework
+curl -fsSL ${url_idx[11]} | bash -
 
-echo "[INFO] Install Font"
-sleep 4
+log "Install Font"
 
-curl -fsSLo ${LCNF[FONT]} ${URL[FONT]}
+# Download font
+curl -fsSLo ${cnf_idx[2]} ${url_idx[0]}
 
-echo "[INFO] Add command to .zshrc"
-sleep 4
+log "Install script to .zshrc"
 
 cat << 'EOF' >> $HOME/.zshrc;
 neofetch
@@ -178,6 +203,7 @@ pulseaudio --check || {
   trap "CleanUpSSH" EXIT
 }
 alias l="ls -A"
+alias {cln,clr,cls}="clear"
 flock -n $TMPDIR/runtime/lock/get-public-ip.lock -c '
   while true; do
     [ -e "$TMPDIR/runtime/lock/get-public-ip.lock" ] && {
@@ -196,43 +222,40 @@ case ":$PATH:" in
 esac
 EOF
 
-echo "[INFO] Install plugin ZSH"
-sleep 4
+log "Install zsh plugins"
 
-git clone https://github.com/zsh-users/zsh-autosuggestions.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
-git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
-git clone https://github.com/zdharma-continuum/fast-syntax-highlighting.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fast-syntax-highlighting
-git clone --depth 1 -- https://github.com/marlonrichert/zsh-autocomplete.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autocomplete
+plugins=${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins
+
+git clone $domain3/zsh-users/zsh-autosuggestions.git $plugins/zsh-autosuggestions
+git clone $domain3/zsh-users/zsh-syntax-highlighting.git $plugins/zsh-syntax-highlighting
+git clone $domain3/zdharma-continuum/fast-syntax-highlighting.git $plugins/fast-syntax-highlighting
+git clone --depth 1 -- $domain3/marlonrichert/zsh-autocomplete.git $plugins/zsh-autocomplete
 sed -i 's/^plugins=(git)$/plugins=(git zsh-autosuggestions zsh-syntax-highlighting fast-syntax-highlighting zsh-autocomplete)/' $HOME/.zshrc
 
-echo "[INFO] Install plugin Micro"
-sleep 4
+log "Install micro editor plugins"
 
 micro -plugin install prettier quoter filemanager
 
-echo "[INFO] Create symbolic link"
-sleep 4
+log "Create symbolic link"
 
 cd $HOME/.termux
 ln -s $PREFIX/bin/zsh shell
-ln -s ${RCNF[DIR_SV]} ${LCNF[DIR_SV]}
 
-echo "[INFO] Fetch config file"
-sleep 4
+# link service daemon to ~/.termux/service directory
+ln -s ${cnf_idx[9]} ${cnf_idx[3]}
 
-curl -fsSLo ${LCNF[DIR_SV]}/mpd/run ${URLCNF[MPDSV]}
-curl -fsSLo ${RCNF[DIR_SSH]}/00-env.conf ${URLCNF[SSH0]}
-curl -fsSLo ${RCNF[DIR_SSHD]}/00-hosting.conf ${URLCNF[SSHD0]}
-curl -fsSLo ${RCNF[DIR_SSHD]}/01-env.conf ${URLCNF[SSHD1]}
-rm -rf $HOME/.mpd
+log "Download config files after pkg update"
 
-echo "[INFO] Reload termux settings"
-sleep 4
+curl -fsSLo ${cnf_idx[3]}/mpd/run ${url_idx[10]}
+curl -fsSLo ${cnf_idx[6]}/00-env.conf ${url_idx[7]}
+curl -fsSLo ${cnf_idx[7]}/00-hosting.conf ${url_idx[8]}
+curl -fsSLo ${cnf_idx[7]}/01-env.conf ${url_idx[9]}
+
+log "Termux reload settings"
 
 termux-reload-settings
 
-echo "[INFO] Start ZSH"
-sleep 4
+log "Initial zsh shell"
 
 c=$(tput cols)
 b='-------------------------------------------------'
@@ -252,16 +275,14 @@ echo "${m}|$(printf '%*s' $p1 '')${rainbow}$(printf '%*s' $q1 '')|"
 echo "${m}|$(printf '%*s' $p2 '')${white_icon}${green_text}${white_icon}$(printf '%*s' $q2 '')|"
 echo "${m}|$(printf '%*s' $iw '')|"
 echo "${m}${b}"
-sleep 4
+sleep 5
 
-echo "[INFO] Install package"
-sleep 4
+log"Install package additional"
 
 cd $HOME
-zsh -i -c 'SV_LIST=(mpd sshd); for v in "${SV_LIST[@]}"; do sv-enable $v; done; pnpm i -g prettier; echo -e "[INFO] \UF0206 Service daemon need to restart termux!"'
-sleep 4
+zsh -i -c 'sv_list=(mpd sshd); for v in "${sv_list[@]}"; do sv-enable $v; done; pnpm i -g prettier prettier-plugin-tailwindcss; echo -e "[INFO] \UF0206 Service daemon need to restart termux!"'
+sleep 5
 
-echo "[INFO] Starting Preview ZSH"
-sleep 4
+log "Restarting"
 
 zsh -i && exit 0

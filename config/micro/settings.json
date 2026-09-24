@@ -1,25 +1,16 @@
 {
-  "*.js": {
-    "tabsize": 2
-  },
-  "*.json": {
-    "tabsize": 2
-  },
-  "*.sh": {
-    "tabsize": 2
-  },
-  "*.ts": {
-    "tabsize": 2
-  },
   "basename": true,
   "clipboard": "internal",
   "colorscheme": "dukeubuntu-tc",
   "diffgutter": true,
   "mkparents": true,
-  "pluginrepos": [
-    "https://raw.githubusercontent.com/himei-miyu/micro-plugin-prettier/main/repo.json"
-  ],
+  "pluginrepos": ["https://raw.githubusercontent.com/himei-miyu/micro-plugin-prettier/main/repo.json"],
   "qouter.enable": "on",
   "savecursor": true,
-  "tabstospaces": true
+  "tabstospaces": true,
+  "prettier.tabwidth": 2,
+  "prettier.autoformat": "on",
+  "prettier.bracketsameline": "false",
+  "prettier.htmlwhitespacesensitivity": "ignore",
+  "prettier.cols": 120
 }

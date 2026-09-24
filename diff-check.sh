@@ -30,3 +30,6 @@ for item in ${TRACKING_LIST[@]}; do
       ;;
   esac
 done
+function data() {
+dad=testing
+}
