@@ -239,6 +239,8 @@ micro -plugin install prettier quoter filemanager
 log "Create symbolic link"
 
 cd $HOME/.termux
+
+# Termux use zsh shell default on startup
 ln -s $PREFIX/bin/zsh shell
 
 # link service daemon to ~/.termux/service directory
