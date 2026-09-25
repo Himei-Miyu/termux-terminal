@@ -48,14 +48,17 @@ dirs[usr_cnf]=$HOME/.config
 dirs[usr_mpd]=${dirs[usr_cnf]}/mpd
 dirs[usr_tmx]=$HOME/.termux
 dirs[usr_run]=${dirs[usr_tmx]}/service
+dirs[usr_log]=${dirs[usr_tmx]}/log
 
 # Variable system directory path
 dirs[sys_etc]=$PREFIX/etc
+dirs[sys_var]=$PREFIX/var
 dirs[sys_ssh]=${dirs[sys_etc]}/ssh
 dirs[sys_sshcnf]=${dirs[sys_ssh]}/ssh_config.d
 dirs[sys_sshdcnf]=${dirs[sys_ssh]}/sshd_config.d
-dirs[sys_run]=$PREFIX/var/service
+dirs[sys_run]=${dirs[sys_var]}/service
 dirs[sys_tmx]=${dirs[sys_etc]}/termux
+dirs[sys_log]=${dirs[sys_var]}/log/sv
 
 # Variable file path
 sys_motd=${dirs[sys_etc]}/motd
@@ -154,8 +157,9 @@ log "Create symbolic link"
 cd ${dirs[usr_tmx]}
 ln -s $sys_zsh shell
 
-# link service daemon to ~/.termux/service directory
+# link service daemon to ~/.termux/* directory
 ln -s ${dirs[sys_run]} ${dirs[usr_run]}
+ln -s ${dirs[sys_log]} ${dirs[usr_log]}
 
 log "Download config files"
 
