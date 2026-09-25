@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# Variable key-value package list
 declare -A pkg_kv=(
   [gh]="GitHub CLI"                      # Manage GitHub repositories from terminal
   [zip]="ZIP compression"                # Compress and extract zip files
@@ -100,20 +101,29 @@ gh_ohmyzsh=${dirs[gh_raw]}/ohmyzsh/ohmyzsh/master/tools/install.sh
 
 log() { echo -e "\e[32;1m[INFO] $@\e[0m"; sleep 5; }
 
-log "Backup motd file"
+debugLog() { [ -n "$debug" ] && read -p "$(printf "\e[33;1m[DEBUG] Breakpoint $@\n[DEBUG] please any key to continue...\e[0m")"; }
+debugScript() { [ -n "$debug" ] && $@; }
+debugMode() { [[ "$1" == "-d" ]] && debug='on'; }
 
-# Backup default motd and replace empty motd
-cd $HOME
+getHash() { awk -v target="$1" '{ if(target==$2) {print $1;} }' snapshot-server.txt; }
+
+log "Next: Backup MOTD and create empty file..."
+
 mv $sys_motd $sys_motd.bak && :> $sys_motd;
 
-log "Delete user files"
+debugScript ls -A $PREFIX/etc
+debugScript echo "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 $sys_motd" | sha256sum -c
+debugLog "1/18 - Was the default MOTD file successfully backed up and a new empty MOTD file created?"
 
+log "Next: Deleting config files in home directory..."
+
+cd $HOME
 rm -rf .ssh/known_hosts* .lyrics .gitconfig .tor .node* .config* .termux .screen* .vim* .zsh* .oh-my* .zcom* .cache* .local* .npm* .mpd;
-ls -A
 
-read -p "$(printf '\e[33;1m[DEBUG] Breakpoint 1/7\n[DEBUG] please any key to continue...\e[0m')"
+debugScript ls -A $HOME
+debugLog "2/18 - Have the config files in home directory been successfully deleted?"
 
-log "Create user config files"
+log "Next: Creating config files in home directory..."
 
 mkdir -p .termux .config
 
@@ -128,30 +138,37 @@ touch log database pid state sticker.sql;
 # Replace termux pkg mirror with default cloudflare server
 cat $sys_tmx_mir_def > $sys_tmx_mir
 
-log "Setting dns"
+debugScript ls -A $HOME && ls -A $HOME/.config/*
+debugLog "3/18 - Have the config files in home directory been successfully created?"
+
+log "Next: Configuring DNS system in resolv.conf..."
 
 printf "192.168.2.20\n1.1.1.1" > $sys_resolv
 
-log "Update & upgrade termux"
+debugScript echo "c4b3c7d7023d1b8ee968a02aeaad0d007f603e53ef181bc868237628f39ad87e $sys_resolv" | sha256sum -c
+debugLog "4/18 - Has the system DNS configuration in resolv.conf been successfully updated?"
+
+log "Next: Updating and upgrading Termux..."
 
 apt update;
 apt -y -o Dpkg::Options::="--force-confdef" full-upgrade;
 
-read -p "$(printf '\e[33;1m[DEBUG] Breakpoint 2/7\n[DEBUG] please any key to continue...\e[0m')"
+debugLog "5/18 - Has Termux been successfully updated and upgraded?"
 
-log "Install packages"
+log "Next: Installing packages..."
 
 pkg install -y "${!pkg_kv[@]}"
 
-ls -A $HOME
+debugLog "6/18 - Were all packages installed successfully?"
 
-log "Delete auto generate files"
+log "Next: Deleting auto-generated config files..."
 
 rm -rf $HOME/.mpd*
 
-read -p "$(printf '\e[33;1m[DEBUG] Breakpoint 3/7\n[DEBUG] please any key to continue...\e[0m')"
+debugScript ls -A $HOME
+debugLog "7/18 - Have the auto-generated config files been successfully deleted?"
 
-log "Create symbolic link"
+log "Next: Creating symbolic links..."
 
 # Termux use zsh shell default on startup
 cd ${dirs[usr_tmx]}
@@ -161,7 +178,10 @@ ln -s $sys_zsh shell
 ln -s ${dirs[sys_run]} ${dirs[usr_run]}
 ln -s ${dirs[sys_log]} ${dirs[usr_log]}
 
-log "Download config files"
+debugScript tree $HOME/.termux
+debugLog "8/18 Have the symbolic links been successfully created?"
+
+log "Next: Downloading config files..."
 
 curl -fsSLo $usr_tmx_prop $gh_tmx_prop
 curl -fsSLo $usr_starship_cnf $gh_starship_cnf
@@ -174,15 +194,32 @@ curl -fsSLo $sys_ssh_00_cnf $gh_ssh_00_cnf
 curl -fsSLo $sys_sshd_00_cnf $gh_sshd_00_cnf
 curl -fsSLo $sys_sshd_01_cnf $gh_sshd_01_cnf
 
-log "Download service daemon files"
+debugScript tree $HOME/.termux $HOME/.config
+debugScript echo "$(getHash config/termux/termux.properties) $usr_tmx_prop" | sha256sum -c
+debugScript echo "$(getHash config/starship.toml) $usr_starship_cnf" | sha256sum -c
+debugScript echo "$(getHash config/micro/settings.json) $usr_micro_cnf" | sha256sum -c
+debugScript echo "$(getHash config/htop/htoprc) $usr_htop_cnf" | sha256sum -c
+debugScript echo "$(getHash config/mpd/mpd.conf) $usr_mpd_cnf" | sha256sum -c
+debugScript echo "$(getHash config/nginx/nginx.conf) $usr_nginx_cnf" | sha256sum -c
+debugScript echo "$(getHash config/ncmpcpp/config) $usr_ncmpcpp_cnf" | sha256sum -c
+debugScript echo "$(getHash etc/ssh/ssh_config.d/00-env.conf) $sys_ssh_00_cnf" | sha256sum -c
+debugScript echo "$(getHash etc/ssh/sshd_config.d/00-hosting.conf) $sys_sshd_00_cnf" | sha256sum -c
+debugScript echo "$(getHash etc/ssh/sshd_config.d/01-env.conf) $sys_sshd_01_cnf" | sha256sum -c
+debugLog "9/18 Have the config files been successfully downloaded?"
+
+log "Next: Downloading service daemon files..."
 
 curl -fsSLo $sys_mpd_run $gh_mpd_run
 curl -fsSLo $sys_nginx_run $gh_nginx_run
 curl -fsSLo $sys_sshd_run $gh_sshd_run
 
-read -p "$(printf '\e[33;1m[DEBUG] Breakpoint 4/7\n[DEBUG] please any key to continue...\e[0m')"
+debugScript tree $PREFIX/var/service
+debugScript echo "$(getHash service/mpd/run) $sys_mpd_run" | sha256sum -c
+debugScript echo "$(getHash service/nginx/run) $sys_nginx_run" | sha256sum -c
+debugScript echo "$(getHash service/sshd/run) $sys_sshd_run" | sha256sum -c
+debugLog "10/18 Have the service daemon files been successfully downloaded?"
 
-log "Create symbolic link service daemon logs"
+log "Next: Creating symbolic links for service daemon logs..."
 
 cd $TMPDIR
 ln -s $sys_svlogger run
@@ -193,32 +230,39 @@ for f in ${dirs[sys_run]}/*; do
   cp -P run $f/log/;
 done
 
-tree ${dirs[sys_run]}
+debugScript tree $PREFIX/var/service
+debugLog "11/18 Have the symbolic links for the service daemon logs been successfully created?"
 
-read -p "$(printf '\e[33;1m[DEBUG] Breakpoint 5/7\n[DEBUG] please any key to continue...\e[0m')"
-
-log "Install Font"
+log "Next: Downloading fonts..."
 
 curl -fsSLo $usr_font $host_font
 
-log "Install micro editor plugins"
+debugScript tree $HOME/.termux
+debugScript echo "22d18aa0eac12ee0416e12dda68168d3610ce71521e6faf272b8615a6c5f0f30 $usr_font" | sha256sum -c
+debugLog "12/18 Have the fonts been successfully downloaded?"
+
+log "Next: Installing Micro editor plugins..."
 
 micro -plugin install prettier quoter filemanager
 
-log "Install ohmyzsh framework"
+debugLog "13/18 Have the Micro editor plugins been successfully installed?"
+
+log "Next: Installing Oh My Zsh..."
 
 bash -c "$(curl -fsSL $gh_ohmyzsh)" "" --unattended
 
-log "Install ohmyzsh plugins"
+debugLog "14/18 Has Oh My Zsh been successfully installed?"
+
+log "Next: Installing Oh My Zsh plugins..."
 
 plugins=${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins
 git clone ${dirs[gh]}/zsh-users/zsh-autosuggestions.git $plugins/zsh-autosuggestions
 git clone ${dirs[gh]}/zdharma-continuum/fast-syntax-highlighting.git $plugins/fast-syntax-highlighting
 sed -i 's/^plugins=(git)$/plugins=(git zsh-autosuggestions fast-syntax-highlighting)/' $HOME/.zshrc
 
-read -p "$(printf '\e[33;1m[DEBUG] Breakpoint 6/7\n[DEBUG] please any key to continue...\e[0m')"
+debugLog "15/18 Have the Oh My Zsh plugins been successfully installed?"
 
-log "Install script to .zshrc"
+log "Next: Adding custom scripts to .zshrc..."
 
 cat << 'EOF' >> $HOME/.zshrc;
 neofetch
@@ -292,36 +336,35 @@ case ":$PATH:" in
 esac
 EOF
 
-log "Termux reload settings"
+debugScript micro .zshrc
+debugLog "16/18 Have the custom scripts been successfully added to .zshrc?"
+
+log "Next: Reloading Termux settings..."
 
 termux-reload-settings
 
-ps -aux | grep runsv
+log "Next: Initializing Zsh..."
 
-pkill runsv
+zsh -lc 'sleep 1;'
 
-log "Initial zsh"
+[ -z $SVDIR ] && export SVDIR=${dirs[sys_run]} && log "Fixed: Export SVDIR daemon..."
 
-zsh -lc 'sleep 2;echo "inside zsh svdir: $SVDIR"'
-echo "outside zsh svdir : $SVDIR"
-
-[ -z $SVDIR ] && export SVDIR=${dirs[sys_run]} && log "svdir path export fixed"
-
-log "Enable service daemon"
-
-echo final check $SVDIR
+log "Next: Enabling service daemons..."
 
 sv_list=(mpd sshd);
 
 for v in "${sv_list[@]}"; do sv-enable $v; done
 
-log "Install package additional"
+debugScript tree $PREFIX/var/service
+debugLog "17/18 Have the service daemons been successfully enabled?"
+
+log "Next: Installing additional packages with pnpm..."
 
 pnpm i -g prettier prettier-plugin-tailwindcss;
 
-read -p "$(printf '\e[33;1m[DEBUG] Breakpoint 7/7\n[DEBUG] please any key to continue...\e[0m')"
+debugLog "18/18 Have the additional packages been successfully installed with pnpm?"
 
-log "Start zsh"
+log "Next: Starting Zsh..."
 
 cd $HOME
 

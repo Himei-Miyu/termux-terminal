@@ -1,6 +1,6 @@
 format = '''
 [┌\(${custom.publicip}\)
-├\(${custom.remoteip}${custom.cellip}${custom.wlanip}${custom.localip}${custom.lanip}\)
+├\(${custom.remoteip}${custom.cellip}${custom.wlanip}${custom.lanip}${custom.localip}\)
 ├\($os\)─$hostname\($time\)─\($status\)$cmd_duration
 ├─\[$directory\] $git_branch$git_commit$git_state$git_metrics$git_status
 └](bold line)$character
@@ -167,6 +167,7 @@ style = 'bold #55ff55'
 
 [directory.substitutions]
 '/data/data/com.termux/files/usr' = '/usr'
+'/usr/var/service' = '/ '
 '/usr/etc' = '/ '
 '/usr/bin' = '/ '
 '/usr/tmp' = '/ '
