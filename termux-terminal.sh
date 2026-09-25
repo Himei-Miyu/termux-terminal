@@ -33,7 +33,7 @@ declare -A dirs
 
 # Variable host directory path
 dirs[host]="https://himei.city"
-dirs[host_font]=${dirs[dns_host]}/fonts
+dirs[host_font]=${dirs[host]}/fonts
 
 # Variable github directory path
 dirs[gh]="https://github.com"
@@ -77,11 +77,11 @@ usr_nginx_cnf=${dirs[usr_cnf]}/nginx/nginx.conf
 gh_nginx_cnf=${dirs[gh_cnf]}/nginx/nginx.conf
 usr_ncmpcpp_cnf=${dirs[usr_cnf]}/ncmpcpp/config
 gh_ncmpcpp_cnf=${dirs[gh_cnf]}/ncmpcpp/config
-sys_ssh_00_cnf=${dirs[sys_sshcnf]}/ssh/ssh_config.d/00-env.conf
+sys_ssh_00_cnf=${dirs[sys_sshcnf]}/00-env.conf
 gh_ssh_00_cnf=${dirs[gh_etc]}/ssh/ssh_config.d/00-env.conf
-sys_sshd_00_cnf=${dirs[sys_sshdcnf]}/ssh/sshd_config.d/00-hosting.conf
+sys_sshd_00_cnf=${dirs[sys_sshdcnf]}/00-hosting.conf
 gh_sshd_00_cnf=${dirs[gh_etc]}/ssh/sshd_config.d/00-hosting.conf
-sys_sshd_01_cnf=${dirs[sys_sshdcnf]}/ssh/sshd_config.d/01-env.conf
+sys_sshd_01_cnf=${dirs[sys_sshdcnf]}/01-env.conf
 gh_sshd_01_cnf=${dirs[gh_etc]}/ssh/sshd_config.d/01-env.conf
 sys_mpd_run=${dirs[sys_run]}/mpd/run
 gh_mpd_run=${dirs[gh_run]}/mpd/run
@@ -95,7 +95,7 @@ usr_font=${dirs[usr_tmx]}/font.ttf
 host_font=${dirs[host_font]}/FiraCodeNerdFont-Regular.ttf
 gh_ohmyzsh=${dirs[gh_raw]}/ohmyzsh/ohmyzsh/master/tools/install.sh
 
-log() { echo -e "[INFO] $@"; sleep 5; }
+log() { echo -e "\e[32;1m[INFO] $@\e[0m"; sleep 5; }
 
 log "Backup motd file"
 
@@ -108,7 +108,7 @@ log "Delete user files"
 rm -rf .ssh/known_hosts* .lyrics .gitconfig .tor .node* .config* .termux .screen* .vim* .zsh* .oh-my* .zcom* .cache* .local* .npm* .mpd;
 ls -A
 
-read -p "[DEBUG] Breakpoint 1/6\n[DEBUG] please any key to continue..."
+read -p "$(printf '\e[33;1m[DEBUG] Breakpoint 1/7\n[DEBUG] please any key to continue...\e[0m')"
 
 log "Create user config files"
 
@@ -134,13 +134,19 @@ log "Update & upgrade termux"
 apt update;
 apt -y -o Dpkg::Options::="--force-confdef" full-upgrade;
 
-read -p "[DEBUG] Breakpoint 2/6\n[DEBUG] please any key to continue..."
+read -p "$(printf '\e[33;1m[DEBUG] Breakpoint 2/7\n[DEBUG] please any key to continue...\e[0m')"
 
 log "Install packages"
 
 pkg install -y "${!pkg_kv[@]}"
 
-read -p "[DEBUG] Breakpoint 3/6\n[DEBUG] please any key to continue..."
+ls -A $HOME
+
+log "Delete auto generate files"
+
+rm -rf $HOME/.mpd*
+
+read -p "$(printf '\e[33;1m[DEBUG] Breakpoint 3/7\n[DEBUG] please any key to continue...\e[0m')"
 
 log "Create symbolic link"
 
@@ -150,9 +156,6 @@ ln -s $sys_zsh shell
 
 # link service daemon to ~/.termux/service directory
 ln -s ${dirs[sys_run]} ${dirs[usr_run]}
-ls -A
-
-read -p "[DEBUG] Breakpoint 4/6\n[DEBUG] please any key to continue..."
 
 log "Download config files"
 
@@ -173,16 +176,22 @@ curl -fsSLo $sys_mpd_run $gh_mpd_run
 curl -fsSLo $sys_nginx_run $gh_nginx_run
 curl -fsSLo $sys_sshd_run $gh_sshd_run
 
+read -p "$(printf '\e[33;1m[DEBUG] Breakpoint 4/7\n[DEBUG] please any key to continue...\e[0m')"
+
 log "Create symbolic link service daemon logs"
 
 cd $TMPDIR
-curl -fsSL $gh_log_run > run
 ln -s $sys_svlogger run
+curl -fsSLo run $gh_log_run
 
-for f in "${dirs[sys_run]}/*"; do
-  rm $sys_run$f/log/run;
-  cp run $sys_run$f/log/;
+for f in ${dirs[sys_run]}/*; do
+  rm -rf $f/log/run;
+  cp -P run $f/log/;
 done
+
+tree ${dirs[sys_run]}
+
+read -p "$(printf '\e[33;1m[DEBUG] Breakpoint 5/7\n[DEBUG] please any key to continue...\e[0m')"
 
 log "Install Font"
 
@@ -194,7 +203,7 @@ micro -plugin install prettier quoter filemanager
 
 log "Install ohmyzsh framework"
 
-sh -c "$(curl -fsSL $gh_ohmyzsh)"
+bash -c "$(curl -fsSL $gh_ohmyzsh)" "" --unattended
 
 log "Install ohmyzsh plugins"
 
@@ -203,7 +212,7 @@ git clone ${dirs[gh]}/zsh-users/zsh-autosuggestions.git $plugins/zsh-autosuggest
 git clone ${dirs[gh]}/zdharma-continuum/fast-syntax-highlighting.git $plugins/fast-syntax-highlighting
 sed -i 's/^plugins=(git)$/plugins=(git zsh-autosuggestions fast-syntax-highlighting)/' $HOME/.zshrc
 
-read -p "[DEBUG] Breakpoint 5/6\n[DEBUG] please any key to continue..."
+read -p "$(printf '\e[33;1m[DEBUG] Breakpoint 6/7\n[DEBUG] please any key to continue...\e[0m')"
 
 log "Install script to .zshrc"
 
@@ -283,7 +292,34 @@ log "Termux reload settings"
 
 termux-reload-settings
 
-log "Initial zsh shell"
+ps -aux | grep runsv
+
+pkill runsv
+
+log "Initial zsh"
+
+zsh -lc 'sleep 2;echo "inside zsh svdir: $SVDIR"'
+echo "outside zsh svdir : $SVDIR"
+
+[ -z $SVDIR ] && export SVDIR=${dirs[sys_run]} && log "svdir path export fixed"
+
+log "Enable service daemon"
+
+echo final check $SVDIR
+
+sv_list=(mpd sshd);
+
+for v in "${sv_list[@]}"; do sv-enable $v; done
+
+log "Install package additional"
+
+pnpm i -g prettier prettier-plugin-tailwindcss;
+
+read -p "$(printf '\e[33;1m[DEBUG] Breakpoint 7/7\n[DEBUG] please any key to continue...\e[0m')"
+
+log "Start zsh"
+
+cd $HOME
 
 c=$(tput cols)
 b='-------------------------------------------------'
@@ -303,16 +339,5 @@ echo "${m}|$(printf '%*s' $p1 '')${rainbow}$(printf '%*s' $q1 '')|"
 echo "${m}|$(printf '%*s' $p2 '')${white_icon}${green_text}${white_icon}$(printf '%*s' $q2 '')|"
 echo "${m}|$(printf '%*s' $iw '')|"
 echo "${m}${b}"
-sleep 5
 
-log "Install package additional"
-
-cd $HOME
-zsh -i -l -c 'sv_list=(mpd sshd); for v in "${sv_list[@]}"; do sv-enable $v; done; pnpm i -g prettier prettier-plugin-tailwindcss; echo -e "[INFO] \UF0206 Service daemon need to restart termux!"'
-sleep 5
-
-read -p "[DEBUG] Breakpoint 6/6\n[DEBUG] please any key to continue..."
-
-log "Restarting"
-
-zsh -i -l && exit 0
+zsh -li && exit 0
