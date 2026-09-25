@@ -25,8 +25,8 @@ declare -A pkg_kv=(
   [openssl-tool]="OpenSSL CLI"           # Cryptography and SSL certificate tools
   [gnupg]="GnuPG encryption"             # Encryption and digital signature tools
   [git]="Version control"                # Track code changes and version control
-  [nginx]="Web server"
-  [pnpm]=""
+  [nginx]="Web server"                   # Hosting web server
+  [pnpm]="Package manager"               # Package manager
 )
 
 declare -A dirs

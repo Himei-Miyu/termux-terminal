@@ -1,35 +1,28 @@
 #!/bin/bash
 
-TRACKING_LIST=(
-"service/mpd/run"
-"config/starship.toml"
-"config/micro/settings.json"
-"config/mpd/mpd.conf"
-"config/ncmpcpp/config"
-"config/htop/htoprc"
-"etc/ssh/ssh_config.d"
-"etc/ssh/sshd_config.d"
+tracking=(
+"$HOME/.config/starship.toml"
+"$HOME/.config/micro/settings.json"
+"$HOME/.config/mpd/mpd.conf"
+#"$HOME/.config/ncmpcpp/bindings"
+"$HOME/.config/ncmpcpp/config"
+"$HOME/.config/htop/htoprc"
+"$HOME/.config/nginx/nginx.conf"
+"$HOME/.termux/termux.properties"
+"$PREFIX/etc/resolv.conf"
+"$PREFIX/etc/ssh/ssh_config.d/00-env.conf"
+"$PREFIX/etc/ssh/sshd_config.d/00-hosting.conf"
+"$PREFIX/etc/ssh/sshd_config.d/01-env.conf"
+"$PREFIX/var/service/mpd/run"
+"$PREFIX/var/service/sshd/run"
+"$PREFIX/var/service/nginx/run"
+"$PREFIX/var/service/mpd/log/run"
+"$PREFIX/var/service/sshd/log/run"
+"$PREFIX/var/service/nginx/log/run"
 )
-fnLog() { [ $1 -gt 0 ] && echo -e "\e[31m[CHANGED]\e[0m $item" || echo -e "\e[32m[PASSED]\e[0m $item"; }
-for item in ${TRACKING_LIST[@]}; do
-  case "$item" in
-    service*)
-      diff $item $PREFIX/var/$item &> /dev/null
-      fnLog $?
-      ;;
-    etc*)
-      diff $item $PREFIX/$item &> /dev/null
-      fnLog $?
-      ;;
-    config*)
-      diff $item $HOME/.$item &> /dev/null
-      fnLog $?
-      ;;
-    *)
-      echo -e "\e[31m[ERROR]\e[0m Tracking unknown : $item" && exit 1
-      ;;
-  esac
-done
-function data() {
-dad=testing
-}
+
+SNAP="snapshot.txt"
+
+[ ! -f "$SNAP" ] && sha256sum "${tracking[@]}" > "$SNAP" || echo "Nothing change"
+
+diff -u "$SNAP" <(sha256sum "${tracking[@]}")
