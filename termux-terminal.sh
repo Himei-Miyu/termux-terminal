@@ -98,27 +98,37 @@ gh_log_run=${dirs[gh_run]}/log/run
 usr_font=${dirs[usr_tmx]}/font.ttf
 host_font=${dirs[host_font]}/FiraCodeNerdFont-Regular.ttf
 gh_ohmyzsh=${dirs[gh_raw]}/ohmyzsh/ohmyzsh/master/tools/install.sh
+usr_snapshot=$(dirname "$(readlink -f "$0")")/snapshot-server.txt
 
 log() { echo -e "\e[32;1m[INFO] $@\e[0m"; sleep 5; }
 
+debugMode() { [[ "$1" == "-d" ]] && debug='on'; }
 debugLog() { [ -n "$debug" ] && read -p "$(printf "\e[33;1m[DEBUG] Breakpoint $@\n[DEBUG] please any key to continue...\e[0m")"; }
 debugScript() { [ -n "$debug" ] && $@; }
-debugMode() { [[ "$1" == "-d" ]] && debug='on'; }
 
-getHash() { awk -v target="$1" '{ if(target==$2) {print $1;} }' snapshot-server.txt; }
+verifyHash() {
+  hash=$(awk -v snap="$1" '{ if(snap==$2) {print $1;} }' $usr_snapshot)
+  sha256sum -c <(echo "$hash $2")
+}
+
+#-----------------------------------------------------------
+
+debugMode $1
+
+[ ! -f "$usr_snapshot" ] && debug="" && log "\e[33mDebugMode use snapshot-server.txt file required"
 
 log "Next: Backup MOTD and create empty file..."
 
 mv $sys_motd $sys_motd.bak && :> $sys_motd;
 
 debugScript ls -A $PREFIX/etc
-debugScript echo "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 $sys_motd" | sha256sum -c
+debugScript sha256sum -c <(echo "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 $sys_motd")
 debugLog "1/18 - Was the default MOTD file successfully backed up and a new empty MOTD file created?"
 
 log "Next: Deleting config files in home directory..."
 
 cd $HOME
-rm -rf .ssh/known_hosts* .lyrics .gitconfig .tor .node* .config* .termux .screen* .vim* .zsh* .oh-my* .zcom* .cache* .local* .npm* .mpd;
+rm -rf .ssh/known_hosts* .lyrics .gitconfig .tor .node* .config* .termux .screen* .vim* .zsh* .oh-my* .zcom* .cache* .local* .npm* .mpd .python_history;
 
 debugScript ls -A $HOME
 debugLog "2/18 - Have the config files in home directory been successfully deleted?"
@@ -145,7 +155,7 @@ log "Next: Configuring DNS system in resolv.conf..."
 
 printf "192.168.2.20\n1.1.1.1" > $sys_resolv
 
-debugScript echo "c4b3c7d7023d1b8ee968a02aeaad0d007f603e53ef181bc868237628f39ad87e $sys_resolv" | sha256sum -c
+debugScript sha256sum -c <(echo "c4b3c7d7023d1b8ee968a02aeaad0d007f603e53ef181bc868237628f39ad87e $sys_resolv")
 debugLog "4/18 - Has the system DNS configuration in resolv.conf been successfully updated?"
 
 log "Next: Updating and upgrading Termux..."
@@ -195,16 +205,16 @@ curl -fsSLo $sys_sshd_00_cnf $gh_sshd_00_cnf
 curl -fsSLo $sys_sshd_01_cnf $gh_sshd_01_cnf
 
 debugScript tree $HOME/.termux $HOME/.config
-debugScript echo "$(getHash config/termux/termux.properties) $usr_tmx_prop" | sha256sum -c
-debugScript echo "$(getHash config/starship.toml) $usr_starship_cnf" | sha256sum -c
-debugScript echo "$(getHash config/micro/settings.json) $usr_micro_cnf" | sha256sum -c
-debugScript echo "$(getHash config/htop/htoprc) $usr_htop_cnf" | sha256sum -c
-debugScript echo "$(getHash config/mpd/mpd.conf) $usr_mpd_cnf" | sha256sum -c
-debugScript echo "$(getHash config/nginx/nginx.conf) $usr_nginx_cnf" | sha256sum -c
-debugScript echo "$(getHash config/ncmpcpp/config) $usr_ncmpcpp_cnf" | sha256sum -c
-debugScript echo "$(getHash etc/ssh/ssh_config.d/00-env.conf) $sys_ssh_00_cnf" | sha256sum -c
-debugScript echo "$(getHash etc/ssh/sshd_config.d/00-hosting.conf) $sys_sshd_00_cnf" | sha256sum -c
-debugScript echo "$(getHash etc/ssh/sshd_config.d/01-env.conf) $sys_sshd_01_cnf" | sha256sum -c
+debugScript verifyHash config/termux/termux.properties $usr_tmx_prop
+debugScript verifyHash config/starship.toml $usr_starship_cnf
+debugScript verifyHash config/micro/settings.json $usr_micro_cnf
+debugScript verifyHash config/htop/htoprc $usr_htop_cnf
+debugScript verifyHash config/mpd/mpd.conf $usr_mpd_cnf
+debugScript verifyHash config/nginx/nginx.conf $usr_nginx_cnf
+debugScript verifyHash config/ncmpcpp/config $usr_ncmpcpp_cnf
+debugScript verifyHash etc/ssh/ssh_config.d/00-env.conf $sys_ssh_00_cnf
+debugScript verifyHash etc/ssh/sshd_config.d/00-hosting.conf $sys_sshd_00_cnf
+debugScript verifyHash etc/ssh/sshd_config.d/01-env.conf $sys_sshd_01_cnf
 debugLog "9/18 Have the config files been successfully downloaded?"
 
 log "Next: Downloading service daemon files..."
@@ -214,9 +224,9 @@ curl -fsSLo $sys_nginx_run $gh_nginx_run
 curl -fsSLo $sys_sshd_run $gh_sshd_run
 
 debugScript tree $PREFIX/var/service
-debugScript echo "$(getHash service/mpd/run) $sys_mpd_run" | sha256sum -c
-debugScript echo "$(getHash service/nginx/run) $sys_nginx_run" | sha256sum -c
-debugScript echo "$(getHash service/sshd/run) $sys_sshd_run" | sha256sum -c
+debugScript verifyHash service/mpd/run $sys_mpd_run
+debugScript verifyHash service/nginx/run $sys_nginx_run
+debugScript verifyHash service/sshd/run $sys_sshd_run
 debugLog "10/18 Have the service daemon files been successfully downloaded?"
 
 log "Next: Creating symbolic links for service daemon logs..."
@@ -238,7 +248,7 @@ log "Next: Downloading fonts..."
 curl -fsSLo $usr_font $host_font
 
 debugScript tree $HOME/.termux
-debugScript echo "22d18aa0eac12ee0416e12dda68168d3610ce71521e6faf272b8615a6c5f0f30 $usr_font" | sha256sum -c
+debugScript sha256sum -c <(echo "22d18aa0eac12ee0416e12dda68168d3610ce71521e6faf272b8615a6c5f0f30 $usr_font")
 debugLog "12/18 Have the fonts been successfully downloaded?"
 
 log "Next: Installing Micro editor plugins..."
@@ -336,7 +346,7 @@ case ":$PATH:" in
 esac
 EOF
 
-debugScript micro .zshrc
+debugScript micro $HOME/.zshrc
 debugLog "16/18 Have the custom scripts been successfully added to .zshrc?"
 
 log "Next: Reloading Termux settings..."
@@ -387,4 +397,6 @@ echo "${m}|$(printf '%*s' $p2 '')${white_icon}${green_text}${white_icon}$(printf
 echo "${m}|$(printf '%*s' $iw '')|"
 echo "${m}${b}"
 
-zsh -li && exit 0
+zsh -li;
+
+kill -HUP $PPID
