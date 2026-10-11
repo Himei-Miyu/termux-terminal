@@ -370,7 +370,7 @@ debugLog "17/18 Have the service daemons been successfully enabled?"
 
 log "Next: Installing additional packages with pnpm..."
 
-pnpm i -g prettier prettier-plugin-tailwindcss;
+zsh -lc 'pnpm i -g prettier prettier-plugin-tailwindcss;'
 
 debugLog "18/18 Have the additional packages been successfully installed with pnpm?"
 
