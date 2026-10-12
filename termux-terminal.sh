@@ -376,9 +376,13 @@ for v in "${sv_list[@]}"; do sv-enable $v; done
 debugScript tree $PREFIX/var/service
 debugLog "$((++debugCurrent))/$debugMax Have the service daemons been successfully enabled?"
 
+log "Fixed: Export PATH pnpm bin..."
+
+export PATH=$HOME/.local/share/pnpm/bin:$PATH
+
 log "Next: Installing additional packages with pnpm..."
 
-zsh -lc "sleep 1; pnpm i -g prettier prettier-plugin-tailwindcss;"
+pnpm i -g prettier prettier-plugin-tailwindcss;
 
 debugLog "$((++debugCurrent))/$debugMax Have the additional packages been successfully installed with pnpm?"
 
