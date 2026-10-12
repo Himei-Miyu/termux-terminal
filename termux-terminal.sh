@@ -378,7 +378,7 @@ debugLog "$((++debugCurrent))/$debugMax Have the service daemons been successful
 
 log "Next: Installing additional packages with pnpm..."
 
-zsh -lc 'pnpm i -g prettier prettier-plugin-tailwindcss;'
+zsh -lc "sleep 1; pnpm i -g prettier prettier-plugin-tailwindcss;"
 
 debugLog "$((++debugCurrent))/$debugMax Have the additional packages been successfully installed with pnpm?"
 
