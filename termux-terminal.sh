@@ -125,7 +125,7 @@ mv $sys_motd $sys_motd.bak && :> $sys_motd;
 
 debugScript ls -A $PREFIX/etc
 debugScript sha256sum -c <(echo "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 $sys_motd")
-debugLog "$((debugCurrent++))/$debugMax - Was the default MOTD file successfully backed up and a new empty MOTD file created?"
+debugLog "$((++debugCurrent))/$debugMax Was the default MOTD file successfully backed up and a new empty MOTD file created?"
 
 log "Next: Deleting config files in home directory..."
 
@@ -133,7 +133,7 @@ cd $HOME
 rm -rf .ssh/known_hosts* .lyrics .gitconfig .tor .node* .config* .termux .screen* .vim* .zsh* .oh-my* .zcom* .cache* .local* .npm* .mpd .python_history;
 
 debugScript ls -A $HOME
-debugLog "$((debugCurrent++))/$debugMax - Have the config files in home directory been successfully deleted?"
+debugLog "$((++debugCurrent))/$debugMax Have the config files in home directory been successfully deleted?"
 
 log "Next: Creating config files in home directory..."
 
@@ -151,34 +151,34 @@ touch log database pid state sticker.sql;
 cat $sys_tmx_mir_def > $sys_tmx_mir
 
 debugScript ls -A $HOME && ls -A $HOME/.config/*
-debugLog "$((debugCurrent++))/$debugMax - Have the config files in home directory been successfully created?"
+debugLog "$((++debugCurrent))/$debugMax Have the config files in home directory been successfully created?"
 
 log "Next: Configuring DNS system in resolv.conf..."
 
 printf "192.168.2.20\n1.1.1.1" > $sys_resolv
 
 debugScript sha256sum -c <(echo "c4b3c7d7023d1b8ee968a02aeaad0d007f603e53ef181bc868237628f39ad87e $sys_resolv")
-debugLog "$((debugCurrent++))/$debugMax - Has the system DNS configuration in resolv.conf been successfully updated?"
+debugLog "$((++debugCurrent))/$debugMax Has the system DNS configuration in resolv.conf been successfully updated?"
 
 log "Next: Updating and upgrading Termux..."
 
 apt update;
 apt -y -o Dpkg::Options::="--force-confdef" full-upgrade;
 
-debugLog "$((debugCurrent++))/$debugMax - Has Termux been successfully updated and upgraded?"
+debugLog "$((++debugCurrent))/$debugMax Has Termux been successfully updated and upgraded?"
 
 log "Next: Installing packages..."
 
 pkg install -y "${!pkg_kv[@]}"
 
-debugLog "$((debugCurrent++))/$debugMax - Were all packages installed successfully?"
+debugLog "$((++debugCurrent))/$debugMax Were all packages installed successfully?"
 
 log "Next: Deleting auto-generated config files..."
 
 rm -rf $HOME/.mpd*
 
 debugScript ls -A $HOME
-debugLog "$((debugCurrent++))/$debugMax - Have the auto-generated config files been successfully deleted?"
+debugLog "$((++debugCurrent))/$debugMax Have the auto-generated config files been successfully deleted?"
 
 log "Next: Creating symbolic links..."
 
@@ -191,7 +191,7 @@ ln -s ${dirs[sys_run]} ${dirs[usr_run]}
 ln -s ${dirs[sys_log]} ${dirs[usr_log]}
 
 debugScript tree $HOME/.termux
-debugLog "$((debugCurrent++))/$debugMax - Have the symbolic links been successfully created?"
+debugLog "$((++debugCurrent))/$debugMax Have the symbolic links been successfully created?"
 
 log "Next: Downloading config files..."
 
@@ -217,7 +217,7 @@ debugScript verifyHash config/ncmpcpp/config $usr_ncmpcpp_cnf
 debugScript verifyHash etc/ssh/ssh_config.d/00-env.conf $sys_ssh_00_cnf
 debugScript verifyHash etc/ssh/sshd_config.d/00-hosting.conf $sys_sshd_00_cnf
 debugScript verifyHash etc/ssh/sshd_config.d/01-env.conf $sys_sshd_01_cnf
-debugLog "$((debugCurrent++))/$debugMax - Have the config files been successfully downloaded?"
+debugLog "$((++debugCurrent))/$debugMax Have the config files been successfully downloaded?"
 
 log "Next: Downloading service daemon files..."
 
@@ -229,7 +229,7 @@ debugScript tree $PREFIX/var/service
 debugScript verifyHash service/mpd/run $sys_mpd_run
 debugScript verifyHash service/nginx/run $sys_nginx_run
 debugScript verifyHash service/sshd/run $sys_sshd_run
-debugLog "$((debugCurrent++))/$debugMax - Have the service daemon files been successfully downloaded?"
+debugLog "$((++debugCurrent))/$debugMax Have the service daemon files been successfully downloaded?"
 
 log "Next: Creating symbolic links for service daemon logs..."
 
@@ -243,7 +243,7 @@ for f in ${dirs[sys_run]}/*; do
 done
 
 debugScript tree $PREFIX/var/service
-debugLog "$((debugCurrent++))/$debugMax - Have the symbolic links for the service daemon logs been successfully created?"
+debugLog "$((++debugCurrent))/$debugMax Have the symbolic links for the service daemon logs been successfully created?"
 
 log "Next: Downloading fonts..."
 
@@ -251,25 +251,25 @@ curl -fsSLo $usr_font $host_font
 
 debugScript tree $HOME/.termux
 debugScript sha256sum -c <(echo "22d18aa0eac12ee0416e12dda68168d3610ce71521e6faf272b8615a6c5f0f30 $usr_font")
-debugLog "$((debugCurrent++))/$debugMax - Have the fonts been successfully downloaded?"
+debugLog "$((++debugCurrent))/$debugMax Have the fonts been successfully downloaded?"
 
 log "Next: Installing Micro editor plugins..."
 
 micro -plugin install prettier quoter filemanager
 
-debugLog "$((debugCurrent++))/$debugMax - Have the Micro editor plugins been successfully installed?"
+debugLog "$((++debugCurrent))/$debugMax Have the Micro editor plugins been successfully installed?"
 
 log "Next: Installing yt-dlp plugins..."
 
 python -m pip install mutagen
 
-debugLog "$((debugCurrent++))/$debugMax - Have the yt-dlp plugins been successfully installed?"
+debugLog "$((++debugCurrent))/$debugMax Have the yt-dlp plugins been successfully installed?"
 
 log "Next: Installing Oh My Zsh..."
 
 bash -c "$(curl -fsSL $gh_ohmyzsh)" "" --unattended
 
-debugLog "$((debugCurrent++))/$debugMax - Has Oh My Zsh been successfully installed?"
+debugLog "$((++debugCurrent))/$debugMax Has Oh My Zsh been successfully installed?"
 
 log "Next: Installing Oh My Zsh plugins..."
 
@@ -278,7 +278,7 @@ git clone ${dirs[gh]}/zsh-users/zsh-autosuggestions.git $plugins/zsh-autosuggest
 git clone ${dirs[gh]}/zdharma-continuum/fast-syntax-highlighting.git $plugins/fast-syntax-highlighting
 sed -i 's/^plugins=(git)$/plugins=(git zsh-autosuggestions fast-syntax-highlighting)/' $HOME/.zshrc
 
-debugLog "$((debugCurrent++))/$debugMax - Have the Oh My Zsh plugins been successfully installed?"
+debugLog "$((++debugCurrent))/$debugMax Have the Oh My Zsh plugins been successfully installed?"
 
 log "Next: Adding custom scripts to .zshrc..."
 
@@ -355,7 +355,7 @@ esac
 EOF
 
 debugScript micro $HOME/.zshrc
-debugLog "$((debugCurrent++))/$debugMax - Have the custom scripts been successfully added to .zshrc?"
+debugLog "$((++debugCurrent))/$debugMax Have the custom scripts been successfully added to .zshrc?"
 
 log "Next: Reloading Termux settings..."
 
@@ -374,13 +374,13 @@ sv_list=(mpd sshd);
 for v in "${sv_list[@]}"; do sv-enable $v; done
 
 debugScript tree $PREFIX/var/service
-debugLog "$((debugCurrent++))/$debugMax - Have the service daemons been successfully enabled?"
+debugLog "$((++debugCurrent))/$debugMax Have the service daemons been successfully enabled?"
 
 log "Next: Installing additional packages with pnpm..."
 
 zsh -lc 'pnpm i -g prettier prettier-plugin-tailwindcss;'
 
-debugLog "$((debugCurrent++))/$debugMax - Have the additional packages been successfully installed with pnpm?"
+debugLog "$((++debugCurrent))/$debugMax Have the additional packages been successfully installed with pnpm?"
 
 log "Next: Starting Zsh..."
 
